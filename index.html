@@ -648,11 +648,9 @@ let activeTab = 'home';
 const avatars = ['👩‍🎨','🧑‍💻','👩‍🎤','🧑‍🍳','👩‍🚀','🧑‍🎸','👩‍🔬','🧑‍🎓','👩‍💼','🧑‍🏋️'];
 const interests = ['🎮 Oyun','🎵 Müzik','📚 Kitap','✈️ Seyahat','🏃 Spor','🎨 Sanat','🍳 Yemek','📸 Fotoğraf','🎬 Film','💻 Teknoloji'];
 
-const sampleUsers = [
-  { name: 'Zeynep', age: 22, city: 'İstanbul', avatar: '👩‍🎨', interests: ['🎨 Sanat','📸 Fotoğraf'], bio: 'Fotoğraf & sanat tutkunuyum ✨', online: true },
-  { name: 'Emre', age: 25, city: 'Ankara', avatar: '🧑‍💻', interests: ['🎮 Oyun','💻 Teknoloji'], bio: 'Yazılım geliştiriyorum 🚀', online: false },
-  { name: 'Selin', age: 20, city: 'İzmir', avatar: '👩‍🎤', interests: ['🎵 Müzik','🎬 Film'], bio: 'Müzik hayatımın her yerinde 🎶', online: true },
-];
+let realUsers = [];
+let myFriendships = [];
+let activeMessages = null; // currently open chat
 
 // ── Init ──
 async function init() {
@@ -671,8 +669,29 @@ async function loadProfile() {
   if (!currentProfile || !currentProfile.username) {
     showProfileSetup();
   } else {
+    await loadUsers();
     showApp();
   }
+}
+
+async function loadUsers() {
+  const { data: users } = await db.from('profiles').select('*').neq('id', currentUser.id);
+  realUsers = users || [];
+  const { data: friendships } = await db.from('friendships').select('*')
+    .or(`sender_id.eq.${currentUser.id},receiver_id.eq.${currentUser.id}`);
+  myFriendships = friendships || [];
+}
+
+function isFriend(userId) {
+  return myFriendships.some(f =>
+    (f.sender_id === userId || f.receiver_id === userId) && f.status === 'accepted'
+  );
+}
+
+function isPending(userId) {
+  return myFriendships.some(f =>
+    f.sender_id === currentUser.id && f.receiver_id === userId && f.status === 'pending'
+  );
 }
 
 // ── AUTH ──
@@ -878,13 +897,51 @@ function renderHome() {
   const h = now.getHours();
   const m = String(now.getMinutes()).padStart(2,'0');
 
+  const usersHTML = realUsers.length === 0
+    ? `<div style="padding:20px 24px;color:rgba(255,255,255,0.4);font-size:14px;text-align:center;">Henüz başka kullanıcı yok 🌱<br><small>Arkadaşlarını davet et!</small></div>`
+    : realUsers.map(u => {
+        const friend = isFriend(u.id);
+        const pending = isPending(u.id);
+        const btnHTML = friend
+          ? `<button class="connect-btn added" disabled>✅</button>`
+          : pending
+          ? `<button class="connect-btn added" disabled>⏳</button>`
+          : `<button class="connect-btn add" onclick="sendFriendRequest('${u.id}','${u.username}',this)">➕</button>`;
+        return `
+          <div class="person-card" onclick="openChat('${u.id}','${u.username}','${u.avatar||'👤'}')">
+            <div class="person-avatar" style="background:linear-gradient(135deg,rgba(255,107,157,0.15),rgba(168,85,247,0.15));">
+              ${u.avatar || '👤'}
+              <div class="status online"></div>
+            </div>
+            <div class="person-info">
+              <div class="person-name">${u.username}${u.age ? ', '+u.age : ''}</div>
+              <div class="person-bio">${u.bio || '...'}</div>
+              <div class="person-tags">
+                ${(u.interests||[]).slice(0,2).map(i => `<span class="tag" style="background:rgba(168,85,247,0.2);color:#C084FC;">${i}</span>`).join('')}
+              </div>
+            </div>
+            ${btnHTML}
+          </div>`;
+      }).join('');
+
+  const featuredHTML = realUsers.slice(0,3).map(u => `
+    <div class="feat-card" onclick="openChat('${u.id}','${u.username}','${u.avatar||'👤'}')">
+      <div class="feat-avatar-placeholder" style="background:linear-gradient(135deg,${randomGrad()});">${u.avatar||'👤'}</div>
+      <div class="online-dot"></div>
+      <div class="feat-badge" style="background:linear-gradient(135deg,${randomGrad()});">✨ Yeni</div>
+      <div class="feat-overlay">
+        <div class="feat-name">${u.username}${u.age ? ', '+u.age : ''}</div>
+        <div class="feat-info">📍 ${u.city||''}</div>
+      </div>
+    </div>`).join('') || `<div style="padding:20px;color:rgba(255,255,255,0.3);font-size:13px;">Henüz kullanıcı yok</div>`;
+
   document.getElementById('app').innerHTML = `
     <div class="app-screen fade-in">
       <div class="status-bar"><span>${h}:${m}</span><span>📶 🔋</span></div>
       <div class="header">
         <div class="logo">ArkadaşBul</div>
         <div class="header-right">
-          <div class="icon-btn">🔔<div class="notif-dot"></div></div>
+          <div class="icon-btn" onclick="loadUsers().then(renderHome)">🔄</div>
         </div>
       </div>
 
@@ -902,52 +959,15 @@ function renderHome() {
       </div>
 
       <div class="section-title">
-        <h2>🔥 Popüler</h2>
-        <span>Tümünü gör →</span>
+        <h2>🔥 Üyeler</h2>
+        <span>${realUsers.length} kişi</span>
       </div>
-      <div class="featured-scroll">
-        ${sampleUsers.map(u => `
-          <div class="feat-card" onclick="showMatchPopup('${u.name}')">
-            <div class="feat-avatar-placeholder" style="background:linear-gradient(135deg,${randomGrad()});">${u.avatar}</div>
-            ${u.online ? '<div class="online-dot"></div>' : ''}
-            <div class="feat-badge" style="background:linear-gradient(135deg,${randomGrad()});">✨ Yeni</div>
-            <div class="feat-overlay">
-              <div class="feat-name">${u.name}, ${u.age}</div>
-              <div class="feat-info">📍 ${u.city}</div>
-            </div>
-          </div>`).join('')}
-        ${currentProfile ? `
-          <div class="feat-card">
-            <div class="feat-avatar-placeholder" style="background:linear-gradient(135deg,rgba(255,107,157,0.3),rgba(168,85,247,0.3));">${currentProfile.avatar || '👤'}</div>
-            <div class="online-dot"></div>
-            <div class="feat-badge" style="background:linear-gradient(135deg,#10B981,#06B6D4);">📍 Sen</div>
-            <div class="feat-overlay">
-              <div class="feat-name">${currentProfile.username}</div>
-              <div class="feat-info">📍 ${currentProfile.city || ''}</div>
-            </div>
-          </div>` : ''}
-      </div>
+      <div class="featured-scroll">${featuredHTML}</div>
 
       <div class="section-title">
-        <h2>📍 Yakınındakiler</h2>
+        <h2>👥 Tüm Kullanıcılar</h2>
       </div>
-      <div class="people-list">
-        ${sampleUsers.map(u => `
-          <div class="person-card">
-            <div class="person-avatar" style="background:linear-gradient(135deg,rgba(255,107,157,0.15),rgba(168,85,247,0.15));">
-              ${u.avatar}
-              ${u.online ? '<div class="status online"></div>' : ''}
-            </div>
-            <div class="person-info">
-              <div class="person-name">${u.name}, ${u.age}</div>
-              <div class="person-bio">${u.bio}</div>
-              <div class="person-tags">
-                ${u.interests.map(i => `<span class="tag" style="background:rgba(168,85,247,0.2);color:#C084FC;">${i}</span>`).join('')}
-              </div>
-            </div>
-            <button class="connect-btn add" onclick="addFriend(this, '${u.name}')">➕</button>
-          </div>`).join('')}
-      </div>
+      <div class="people-list">${usersHTML}</div>
 
       <div class="bottom-nav">
         <div class="nav-item active" onclick="switchTab('home',this)">
@@ -1043,6 +1063,60 @@ function switchTab(tab, el) {
   activeTab = tab;
   if (tab === 'home') renderHome();
   else if (tab === 'profile') renderProfile();
+  else if (tab === 'messages') renderMessagesTab();
+  else if (tab === 'discover') renderDiscover();
+}
+
+async function renderMessagesTab() {
+  // Load all conversations (unique people I've messaged)
+  const { data: msgs } = await db.from('messages').select('*')
+    .or(`sender_id.eq.${currentUser.id},receiver_id.eq.${currentUser.id}`)
+    .order('created_at', { ascending: false });
+
+  const seen = new Set();
+  const convos = [];
+  for (const msg of (msgs||[])) {
+    const otherId = msg.sender_id === currentUser.id ? msg.receiver_id : msg.sender_id;
+    if (!seen.has(otherId)) {
+      seen.add(otherId);
+      const user = realUsers.find(u => u.id === otherId);
+      if (user) convos.push({ user, lastMsg: msg });
+    }
+  }
+
+  const convosHTML = convos.length === 0
+    ? `<div style="padding:60px 20px;text-align:center;color:rgba(255,255,255,0.3);">
+        <div style="font-size:48px;margin-bottom:12px;">💬</div>
+        <div>Henüz mesajlaşma yok.<br>Birine merhaba de!</div>
+      </div>`
+    : convos.map(c => `
+        <div onclick="openChat('${c.user.id}','${c.user.username}','${c.user.avatar||'👤'}')" 
+          style="display:flex;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;transition:background 0.2s;"
+          onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
+          <div style="width:52px;height:52px;border-radius:18px;background:linear-gradient(135deg,rgba(255,107,157,0.2),rgba(168,85,247,0.2));display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;">${c.user.avatar||'👤'}</div>
+          <div style="flex:1;">
+            <div style="font-weight:800;font-size:15px;">${c.user.username}</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:3px;">${c.lastMsg.content.slice(0,40)}${c.lastMsg.content.length>40?'...':''}</div>
+          </div>
+        </div>`).join('');
+
+  document.getElementById('app').innerHTML = `
+    <div class="app-screen fade-in">
+      <div class="status-bar"><span>${new Date().getHours()}:${String(new Date().getMinutes()).padStart(2,'0')}</span><span>📶 🔋</span></div>
+      <div class="header"><div class="logo" style="font-family:'Pacifico',cursive;font-size:22px;background:linear-gradient(135deg,#FF6B9D,#A855F7,#06B6D4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Mesajlar</div></div>
+      <div style="flex:1;">${convosHTML}</div>
+      <div class="bottom-nav">
+        <div class="nav-item" onclick="switchTab('home',this)"><div class="nav-icon">🏠</div><span class="nav-label">Ana Sayfa</span></div>
+        <div class="nav-item" onclick="switchTab('discover',this)"><div class="nav-icon">🔍</div><span class="nav-label">Keşfet</span></div>
+        <div class="nav-item active" onclick="switchTab('messages',this)"><div class="nav-icon">💬</div><span class="nav-label">Mesajlar</span></div>
+        <div class="nav-item" onclick="switchTab('profile',this)"><div class="nav-icon">👤</div><span class="nav-label">Profil</span></div>
+      </div>
+    </div>
+  `;
+}
+
+function renderDiscover() {
+  renderHome(); // same as home for now
 }
 
 function randomGrad() {
@@ -1063,24 +1137,112 @@ function closeMatch() {
   document.getElementById('matchPopup').classList.remove('show');
 }
 
-function addFriend(btn, name) {
-  if (btn.classList.contains('added')) return;
+async function sendFriendRequest(receiverId, name, btn) {
+  if (!btn || btn.classList.contains('added')) return;
+  btn.disabled = true;
+  btn.textContent = '⏳';
   btn.classList.remove('add');
   btn.classList.add('added');
-  btn.textContent = '✅';
+
+  const { error } = await db.from('friendships').insert({
+    sender_id: currentUser.id,
+    receiver_id: receiverId,
+    status: 'pending'
+  });
+
+  if (error) {
+    btn.textContent = '❌';
+    return;
+  }
+
+  // sparkles
   const sparkles = ['✨','🌟','💫','⭐'];
   for (let i = 0; i < 4; i++) {
     const s = document.createElement('div');
     s.className = 'sparkle';
     s.textContent = sparkles[i % 4];
     const rect = btn.getBoundingClientRect();
-    const phone = btn.closest('.phone').getBoundingClientRect();
+    const phone = document.querySelector('.phone').getBoundingClientRect();
     s.style.left = (rect.left - phone.left + Math.random()*60-20)+'px';
     s.style.top = (rect.top - phone.top + Math.random()*40-20)+'px';
-    btn.closest('.phone').appendChild(s);
+    document.querySelector('.phone').appendChild(s);
     setTimeout(() => s.remove(), 800);
   }
+
+  await loadUsers();
   setTimeout(() => showMatchPopup(name), 400);
+}
+
+async function openChat(userId, username, avatar) {
+  activeMessages = { userId, username, avatar };
+  await renderChat(userId, username, avatar);
+}
+
+async function renderChat(userId, username, avatar) {
+  // Load messages
+  const { data: msgs } = await db.from('messages').select('*')
+    .or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${userId}),and(sender_id.eq.${userId},receiver_id.eq.${currentUser.id})`)
+    .order('created_at', { ascending: true });
+
+  const msgsHTML = (msgs||[]).length === 0
+    ? `<div style="text-align:center;color:rgba(255,255,255,0.3);padding:40px 20px;font-size:13px;">Henüz mesaj yok.<br>Merhaba de! 👋</div>`
+    : (msgs||[]).map(msg => {
+        const isMe = msg.sender_id === currentUser.id;
+        return `<div style="display:flex;justify-content:${isMe?'flex-end':'flex-start'};margin-bottom:8px;">
+          <div style="max-width:70%;padding:10px 14px;border-radius:${isMe?'18px 18px 4px 18px':'18px 18px 18px 4px'};background:${isMe?'linear-gradient(135deg,#FF6B9D,#A855F7)':'rgba(255,255,255,0.08)'};font-size:14px;color:white;">
+            ${msg.content}
+          </div>
+        </div>`;
+      }).join('');
+
+  document.getElementById('app').innerHTML = `
+    <div class="app-screen fade-in" style="display:flex;flex-direction:column;height:844px;">
+      <div style="padding:20px 20px 16px;display:flex;align-items:center;gap:14px;border-bottom:1px solid rgba(255,255,255,0.06);background:var(--bg);">
+        <div onclick="showApp()" style="cursor:pointer;font-size:22px;padding:8px;">←</div>
+        <div style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,rgba(255,107,157,0.2),rgba(168,85,247,0.2));display:flex;align-items:center;justify-content:center;font-size:22px;">${avatar}</div>
+        <div>
+          <div style="font-weight:800;font-size:15px;">${username}</div>
+          <div style="font-size:12px;color:var(--green);">● Çevrimiçi</div>
+        </div>
+      </div>
+
+      <div id="chatMessages" style="flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;">
+        ${msgsHTML}
+      </div>
+
+      <div style="padding:16px 20px 30px;display:flex;gap:10px;border-top:1px solid rgba(255,255,255,0.06);background:var(--bg);">
+        <input id="msgInput" type="text" placeholder="Mesaj yaz..." 
+          style="flex:1;background:var(--card);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:12px 16px;color:white;font-family:'Nunito',sans-serif;font-size:14px;outline:none;"
+          onkeydown="if(event.key==='Enter') sendMessage('${userId}')">
+        <button onclick="sendMessage('${userId}')" 
+          style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#FF6B9D,#A855F7);border:none;cursor:pointer;font-size:20px;color:white;transition:all 0.2s;"
+          onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+          ➤
+        </button>
+      </div>
+    </div>
+  `;
+
+  // Scroll to bottom
+  const chatEl = document.getElementById('chatMessages');
+  if (chatEl) chatEl.scrollTop = chatEl.scrollHeight;
+}
+
+async function sendMessage(receiverId) {
+  const input = document.getElementById('msgInput');
+  const content = input.value.trim();
+  if (!content) return;
+  input.value = '';
+
+  await db.from('messages').insert({
+    sender_id: currentUser.id,
+    receiver_id: receiverId,
+    content
+  });
+
+  if (activeMessages) {
+    await renderChat(activeMessages.userId, activeMessages.username, activeMessages.avatar);
+  }
 }
 
 async function logout() {

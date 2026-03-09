@@ -385,7 +385,7 @@ let users = [], friends = [], msgs = [], notifs = [], posts = [], follows = [];
 let myLoc = null, locFilter = false;
 let msgLimit = { n: 20, resetAt: null };
 let curPage = 'home', chatWith = null;
-let selAv = null, selGender = null, selInts = [];
+let selAv = null, selGenderVal = null, selInts = [];
 let lang = 'tr';
 
 // ── AVATARS ──
@@ -489,7 +489,7 @@ function renderSetup(){
   document.getElementById('interestGrid').innerHTML=INTS.map(i=>`<div class="int-tag" onclick="toggleInt(this,'${i}')">${i}</div>`).join('');
 }
 function pickAv(id){ selAv=id; document.querySelectorAll('.av-item').forEach(e=>e.classList.remove('sel')); document.getElementById('av-'+id).classList.add('sel'); }
-function selGender(g){ selGender=g; document.querySelectorAll('.gender-btn').forEach(e=>e.classList.remove('sel')); document.getElementById('g-'+g).classList.add('sel'); }
+function selGender(g){ selGenderVal=g; document.querySelectorAll('.gender-btn').forEach(e=>e.classList.remove('sel')); document.getElementById('g-'+g).classList.add('sel'); }
 function toggleInt(el,v){ if(selInts.includes(v)){ selInts=selInts.filter(i=>i!==v); el.classList.remove('sel'); } else { if(selInts.length>=5){ toast('En fazla 5!'); return; } selInts.push(v); el.classList.add('sel'); } }
 
 async function saveProfile(){
@@ -501,7 +501,7 @@ async function saveProfile(){
   const loc=await getLoc();
   const {error}=await db.from('profiles').upsert({
     id:me.id, email:me.email||'', username, age, bio,
-    avatar:selAv, gender:selGender, interests:selInts,
+    avatar:selAv, gender:selGenderVal, interests:selInts,
     lat:loc?.lat||null, lng:loc?.lng||null, city:loc?.city||null,
     is_anon:true, lang, created_at:new Date().toISOString()
   });
@@ -846,7 +846,7 @@ function pageMyProfile(){
       '</div>'+
       '<div class="int-grid">'+(myProf.interests||[]).map(i=>'<div class="int-tag sel">'+i+'</div>').join('')+'</div>'+
       '<div style="display:flex;gap:8px;margin-top:16px;">'+
-        '<button class="btn" style="flex:1;" onclick="toast(\'✏️ Profil düzenleme yakında!\')">Profili Düzenle</button>'+
+        '<button class="btn" style="flex:1;" onclick="openEditProfile()">✏️ Profili Düzenle</button>'+
         '<button class="btn btn-outline btn-sm" onclick="doLogout()">🚪 Çıkış</button>'+
       '</div>'+
     '</div></div>';
@@ -875,9 +875,9 @@ function openProf(uid){
     '</div>'+
     '<div class="int-grid">'+(u.interests||[]).map(i=>'<div class="int-tag sel">'+i+'</div>').join('')+'</div>'+
     '<div class="prof-btns" style="margin-top:14px;">'+
-      '<button class="btn-follow '+(isFollowing?'ing':'')+'" onclick="toggleFollow(\''+uid+'\',this)">'+(isFollowing?'Takip Ediliyor':'Takip Et')+'</button>'+
-      (isFr?'<button class="btn-msg" onclick="closeModal();openChat(\''+u.id+'\',\''+u.username+'\',\''+u.avatar+'\')">💬 Mesaj</button>'
-           :'<button class="btn-msg" onclick="addFriend(\''+u.id+'\',\''+u.username+'\',this)">➕ Ekle</button>')+
+      (isFr
+        ?'<button class="btn-follow" style="background:linear-gradient(135deg,var(--pink),var(--purple));" onclick="closeModal();goPage(\'messages\');setTimeout(()=>openChat(\''+u.id+'\',\''+u.username+'\',\''+u.avatar+'\'),100)">💬 Mesaj Gönder</button>'
+        :'<button class="btn-follow" onclick="addFriend(\''+u.id+'\',\''+u.username+'\',this)">➕ Arkadaş Ekle</button>')+
       '<button class="btn-rep" onclick="showReport(\''+uid+'\',\''+u.username+'\')">🚩</button>'+
     '</div></div>','👤 Profil');
 }
@@ -993,6 +993,46 @@ function setupRealtime(){
       }
     }
   }).subscribe();
+}
+
+// ── EDIT PROFILE ──
+function openEditProfile(){
+  if(!myProf) return;
+  const mg = myProf.gender||'';
+  const html = '<div>'+
+    '<input class="inp" id="editUsername" value="'+(myProf.username||'')+'" placeholder="Takma ad">'+
+    '<textarea class="inp" id="editBio" style="resize:none;height:76px;" placeholder="Bio...">'+(myProf.bio||'')+'</textarea>'+
+    '<div style="font-size:13px;font-weight:800;margin-bottom:8px;">Yaşın: <span id="editAgeVal" style="color:var(--pink);">'+(myProf.age||18)+'</span></div>'+
+    '<input type="range" class="age-slider" id="editAge" min="16" max="60" value="'+(myProf.age||18)+'" oninput="document.getElementById(\'editAgeVal\').textContent=this.value" style="width:100%;margin-bottom:14px;">'+
+    '<div style="font-size:13px;font-weight:800;margin-bottom:8px;">Cinsiyet</div>'+
+    '<div style="display:flex;gap:8px;margin-bottom:14px;">'+
+      '<div class="gender-btn '+(mg==='male'?'sel':'')+'" id="eg-male" onclick="selEditGender(this,\'male\')">👨 Erkek</div>'+
+      '<div class="gender-btn '+(mg==='female'?'sel':'')+'" id="eg-female" onclick="selEditGender(this,\'female\')">👩 Kız</div>'+
+      '<div class="gender-btn '+(mg==='other'?'sel':'')+'" id="eg-other" onclick="selEditGender(this,\'other\')">🌈 Diğer</div>'+
+    '</div>'+
+    '<button class="btn" onclick="saveEditProfile()">💾 Kaydet</button>'+
+  '</div>';
+  window._editGender = mg;
+  showModal(html,'✏️ Profili Düzenle');
+}
+function selEditGender(g){
+  window._editGender = g;
+  document.querySelectorAll('#eg-male,#eg-female,#eg-other').forEach(e=>e.classList.remove('sel'));
+  const el = document.getElementById('eg-'+g); if(el) el.classList.add('sel');
+}
+
+async function saveEditProfile(){
+  const username = document.getElementById('editUsername')?.value.trim();
+  const bio = document.getElementById('editBio')?.value.trim();
+  const age = parseInt(document.getElementById('editAge')?.value)||18;
+  const gender = window._editGender;
+  if(!username){ toast('❌ Takma ad gir!'); return; }
+  const {error} = await db.from('profiles').update({username,bio,age,gender}).eq('id',me.id);
+  if(error){ toast('❌ '+error.message); return; }
+  await loadMyProf();
+  closeModal();
+  render(curPage);
+  toast('✅ Profil güncellendi!');
 }
 
 // ── MODAL ──

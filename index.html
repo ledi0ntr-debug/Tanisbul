@@ -567,17 +567,18 @@ function createParticles(){
 // INIT
 // ────────────────────────────────────────────
 async function init(){
-  const { data: { session } } = await db.auth.getSession();
-  if(session){
-    document.getElementById('welcomeScreen').style.display = 'none';
-    currentUser = session.user;
-    await loadMyProfile();
-    if(!myProfile){ show('setupScreen'); renderSetup(); }
-    else { showApp(); }
-  } else {
-    createParticles();
-    setTimeout(()=>{ show('authScreen'); }, 3200);
-  }
+  createParticles();
+  setTimeout(async () => {
+    const { data: { session } } = await db.auth.getSession();
+    if(session){
+      currentUser = session.user;
+      await loadMyProfile();
+      if(!myProfile){ showSetup(); }
+      else { showApp(); }
+    } else {
+      show('authScreen');
+    }
+  }, 3600);
 }
 
 // ────────────────────────────────────────────
@@ -667,10 +668,6 @@ function acceptRules(){
   show('setupScreen');
   renderSetup();
 }
-function showSetup(){
-  show('setupScreen');
-  renderSetup();
-}
 
 // ────────────────────────────────────────────
 // PROFILE SETUP
@@ -741,7 +738,7 @@ async function loadUsers(){
   realUsers = data || [];
   const { data: fs } = await db.from('friendships').select('*').or(`sender_id.eq.${currentUser.id},receiver_id.eq.${currentUser.id}`);
   myFriendships = fs || [];
-  const { data: fls } = await db.from('follows').select('*').eq('follower_id', currentUser.id);
+  const { data: fls } = await db.from('follows').select('*').eq('follower_id', currentUser.id).catch(()=>({data:[]}));
   follows = fls || [];
 }
 async function loadMessages(){
@@ -750,13 +747,13 @@ async function loadMessages(){
 }
 async function loadNotifications(){
   // friend requests as notifications
-  const { data } = await db.from('friendships').select('*, sender:profiles!friendships_sender_id_fkey(username,avatar)').eq('receiver_id',currentUser.id).eq('status','pending');
+  const { data } = await db.from('friendships').select('*, sender:profiles!friendships_sender_id_fkey(username,avatar)').eq('receiver_id',currentUser.id).eq('status','pending').catch(()=>({data:[]}));
   notifications = data || [];
   const dot = document.getElementById('notifDot');
   if(dot) dot.style.display = notifications.length > 0 ? 'block' : 'none';
 }
 async function loadDiscoverPosts(){
-  const { data } = await db.from('posts').select('*, author:profiles!posts_author_id_fkey(username,avatar)').order('created_at',{ascending:false}).limit(30);
+  const { data } = await db.from('posts').select('*, author:profiles!posts_author_id_fkey(username,avatar)').order('created_at',{ascending:false}).limit(30).catch(()=>({data:[]}));
   discoverPosts = data || [];
 }
 
@@ -939,7 +936,7 @@ async function likePost(id, el){
   el.classList.add('liked');
   const current = parseInt(el.textContent.replace(/[^0-9]/g,''))||0;
   el.textContent = '❤️ '+(current+1);
-  await db.from('posts').update({likes: current+1}).eq('id', id);
+  await db.from('posts').update({likes: current+1}).eq('id', id).catch(()=>{});
 }
 function replyPost(id, username){ showToast(`💬 @${username} yanıtlıyorsunuz...`); }
 
@@ -1025,8 +1022,7 @@ function openChat(userId, username, avatarId){
       </div>
     </div>`;
 
-  const isMob = window.innerWidth < 768;
-  const content = isMob ? document.getElementById('mobileContent') : document.getElementById('deskContent');
+  const content = document.getElementById('mobileContent') || document.getElementById('deskContent');
   if(content){ content.innerHTML = chatHTML; scrollToBottom(); }
 }
 function scrollToBottom(){
@@ -1179,11 +1175,11 @@ function openUserProfile(userId){
 async function toggleFollow(userId, btn){
   const isFollowing = follows.some(f=>f.following_id===userId);
   if(isFollowing){
-    await db.from('follows').delete().eq('follower_id',currentUser.id).eq('following_id',userId);
+    await db.from('follows').delete().eq('follower_id',currentUser.id).eq('following_id',userId).catch(()=>{});
     follows = follows.filter(f=>f.following_id!==userId);
     btn.className = 'btn-follow'; btn.textContent = t('follow');
   } else {
-    await db.from('follows').insert({follower_id:currentUser.id,following_id:userId});
+    await db.from('follows').insert({follower_id:currentUser.id,following_id:userId}).catch(()=>{});
     follows.push({follower_id:currentUser.id,following_id:userId});
     btn.className = 'btn-follow following'; btn.textContent = t('following');
   }
@@ -1206,7 +1202,7 @@ function showReportModal(userId, username){
   }, 200);
 }
 async function submitReport(userId, reason){
-  await db.from('reports').insert({reporter_id:currentUser.id,reported_id:userId,reason,created_at:new Date().toISOString()});
+  await db.from('reports').insert({reporter_id:currentUser.id,reported_id:userId,reason,created_at:new Date().toISOString()}).catch(()=>{});
   closeModal();
   showToast('✅ Şikayetin alındı!');
 }
@@ -1389,12 +1385,8 @@ db.auth.onAuthStateChange(async (event, session) => {
   if(event === 'SIGNED_IN' && session && !currentUser){
     currentUser = session.user;
     await loadMyProfile();
-    if(!myProfile){ show('rulesScreen'); }
-    else { showApp(); }
-  }
-  if(event === 'SIGNED_OUT'){
-    currentUser = null; myProfile = null;
-    show('authScreen');
+    if(!myProfile) showRules();
+    else showApp();
   }
 });
 
@@ -1402,9 +1394,10 @@ db.auth.onAuthStateChange(async (event, session) => {
 // POSTS TABLE AUTO-CREATE (try)
 // ────────────────────────────────────────────
 async function ensureTables(){
-  try { await db.from('follows').select('id').limit(1); } catch(e){}
-  try { await db.from('posts').select('id').limit(1); } catch(e){}
-  try { await db.from('reports').select('id').limit(1); } catch(e){}
+  // Try to insert a dummy check
+  await db.from('follows').select('id').limit(1).catch(()=>{});
+  await db.from('posts').select('id').limit(1).catch(()=>{});
+  await db.from('reports').select('id').limit(1).catch(()=>{});
 }
 
 // ── START ──

@@ -22,8 +22,8 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(168,85,247,0.3);border-radius:2px;}
 
 /* ── WELCOME SCREEN ── */
-#welcomeScreen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;animation:welcomeFadeOut 0.5s ease 3s forwards;}#welcomeScreen.hidden{display:none!important;}
-@keyframes welcomeFadeOut{to{opacity:0;pointer-events:none;}}
+#welcomeScreen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;transition:opacity 0.5s;}#welcomeScreen.hidden{display:none!important;}
+
 .welcome-logo{font-family:'Pacifico',cursive;font-size:48px;background:linear-gradient(135deg,var(--pink),var(--purple),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:welcomePop 0.6s cubic-bezier(0.34,1.56,0.64,1);}
 @keyframes welcomePop{from{transform:scale(0.5);opacity:0;}to{transform:scale(1);opacity:1;}}
 .welcome-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
@@ -578,7 +578,10 @@ function createParticles(){
     p.style.animationDuration = (2+Math.random()*2)+'s';
     container.appendChild(p);
   }
-  setTimeout(()=>{ const ws=document.getElementById('welcomeScreen'); if(ws) ws.style.display='none'; }, 3500);
+  setTimeout(()=>{
+    const ws=document.getElementById('welcomeScreen');
+    if(ws){ ws.style.opacity='0'; setTimeout(()=>{ ws.classList.add('hidden'); show('authScreen'); }, 500); }
+  }, 2500);
 }
 
 // ────────────────────────────────────────────
@@ -595,7 +598,7 @@ async function init(){
     else { showApp(); }
   } else {
     createParticles();
-    setTimeout(()=>{ show('authScreen'); }, 3200);
+    // welcomeScreen hides itself via createParticles timeout
   }
 }
 

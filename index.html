@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>ArkadaşBul 🌈</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Pacifico&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -633,7 +633,13 @@
 const SUPABASE_URL = 'https://snbqilkkysxmzmjfsihf.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_HJ2nnuGyTszm7q_2y40KDQ_GZrSUenq';
 const { createClient } = supabase;
-const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+const db = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true
+  }
+});
 
 let currentUser = null;
 let currentProfile = null;

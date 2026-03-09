@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>ArkadaşBul 🌈</title>
+<title>TanışBul 🌈</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js" crossorigin="anonymous"></script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Pacifico&display=swap" rel="stylesheet">
@@ -624,7 +624,7 @@
 <div class="phone" id="app">
   <!-- Loading -->
   <div class="loading-screen" id="loadingScreen">
-    <div style="font-family:'Pacifico',cursive;font-size:36px;background:linear-gradient(135deg,#FF6B9D,#A855F7,#06B6D4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">ArkadaşBul</div>
+    <div style="font-family:'Pacifico',cursive;font-size:36px;background:linear-gradient(135deg,#FF6B9D,#A855F7,#06B6D4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">TanışBul</div>
     <div class="spinner"></div>
   </div>
 </div>
@@ -687,7 +687,7 @@ function showAuthFallback() {
   // Simple username/password fallback
   document.getElementById('app').innerHTML = `
     <div class="auth-screen fade-in">
-      <div class="auth-logo">ArkadaşBul</div>
+      <div class="auth-logo">TanışBul</div>
       <div class="auth-subtitle">Yeni arkadaşlar keşfet 🌈</div>
       <div class="auth-form" style="margin-top:20px;">
         <div class="input-group">
@@ -790,7 +790,7 @@ function isPending(userId) {
 function showAuth() {
   document.getElementById('app').innerHTML = `
     <div class="auth-screen fade-in">
-      <div class="auth-logo">ArkadaşBul</div>
+      <div class="auth-logo">TanışBul</div>
       <div class="auth-subtitle">Yeni arkadaşlar keşfet 🌈</div>
       <div class="auth-tabs">
         <div class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Giriş Yap</div>
@@ -1031,7 +1031,7 @@ function renderHome() {
     <div class="app-screen fade-in">
       <div class="status-bar"><span>${h}:${m}</span><span>📶 🔋</span></div>
       <div class="header">
-        <div class="logo">ArkadaşBul</div>
+        <div class="logo">TanışBul</div>
         <div class="header-right">
           <div class="icon-btn" onclick="loadUsers().then(renderHome)">🔄</div>
         </div>

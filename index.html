@@ -567,18 +567,17 @@ function createParticles(){
 // INIT
 // ────────────────────────────────────────────
 async function init(){
-  createParticles();
-  setTimeout(async () => {
-    const { data: { session } } = await db.auth.getSession();
-    if(session){
-      currentUser = session.user;
-      await loadMyProfile();
-      if(!myProfile){ showSetup(); }
-      else { showApp(); }
-    } else {
-      show('authScreen');
-    }
-  }, 3600);
+  const { data: { session } } = await db.auth.getSession();
+  if(session){
+    document.getElementById('welcomeScreen').style.display = 'none';
+    currentUser = session.user;
+    await loadMyProfile();
+    if(!myProfile){ show('setupScreen'); renderSetup(); }
+    else { showApp(); }
+  } else {
+    createParticles();
+    setTimeout(()=>{ show('authScreen'); }, 3200);
+  }
 }
 
 // ────────────────────────────────────────────
@@ -665,6 +664,10 @@ function showRules(){
   show('rulesScreen');
 }
 function acceptRules(){
+  show('setupScreen');
+  renderSetup();
+}
+function showSetup(){
   show('setupScreen');
   renderSetup();
 }
@@ -1022,7 +1025,8 @@ function openChat(userId, username, avatarId){
       </div>
     </div>`;
 
-  const content = document.getElementById('mobileContent') || document.getElementById('deskContent');
+  const isMob = window.innerWidth < 768;
+  const content = isMob ? document.getElementById('mobileContent') : document.getElementById('deskContent');
   if(content){ content.innerHTML = chatHTML; scrollToBottom(); }
 }
 function scrollToBottom(){
@@ -1385,8 +1389,12 @@ db.auth.onAuthStateChange(async (event, session) => {
   if(event === 'SIGNED_IN' && session && !currentUser){
     currentUser = session.user;
     await loadMyProfile();
-    if(!myProfile) showRules();
-    else showApp();
+    if(!myProfile){ show('rulesScreen'); }
+    else { showApp(); }
+  }
+  if(event === 'SIGNED_OUT'){
+    currentUser = null; myProfile = null;
+    show('authScreen');
   }
 });
 

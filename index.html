@@ -7,13 +7,17 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Pacifico&display=swap" rel="stylesheet">
 <style>
-:root{--pink:#FF6B9D;--purple:#A855F7;--cyan:#06B6D4;--green:#10B981;--red:#EF4444;--bg:#0A0A14;--surface:#0F0F1E;--card:#14142A;--border:rgba(255,255,255,0.07);--text:#F0EFF8;--muted:rgba(240,239,248,0.45);--nav:64px;}
+:root{
+  --pink:#FF6B9D;--purple:#A855F7;--cyan:#06B6D4;--green:#10B981;--red:#EF4444;--orange:#F97316;
+  --bg:#0A0A14;--surface:#0F0F1E;--card:#14142A;--border:rgba(255,255,255,0.07);
+  --text:#F0EFF8;--muted:rgba(240,239,248,0.45);--nav:64px;
+}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-thumb{background:rgba(168,85,247,0.3);border-radius:2px;}
 
-/* AUTH */
-.screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+/* ── AUTH ── */
+.screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at 30% 20%,rgba(168,85,247,0.1),transparent 60%),var(--bg);}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:28px;padding:32px;width:100%;max-width:440px;}
 .logo{font-family:'Pacifico',cursive;font-size:32px;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;margin-bottom:6px;}
 .sub{text-align:center;font-size:13px;color:var(--muted);margin-bottom:24px;}
@@ -27,21 +31,14 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .btn:hover{transform:translateY(-2px);}
 .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
 .btn-outline{background:var(--card);border:1.5px solid var(--border);color:var(--text);box-shadow:none;}
-.btn-outline:hover{border-color:var(--purple);}
 .btn-sm{padding:10px 16px;font-size:13px;width:auto;}
+.btn-google{width:100%;padding:12px;background:white;border:1.5px solid #E5E7EB;border-radius:14px;color:#374151;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all 0.2s;margin-top:4px;}
+.btn-google:hover{background:#F9FAFB;}
 .divider{display:flex;align-items:center;gap:12px;margin:14px 0;color:var(--muted);font-size:12px;}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
-.btn-google{width:100%;padding:12px;background:white;border:1.5px solid #E5E7EB;border-radius:14px;color:#374151;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all 0.2s;}
-.btn-google:hover{background:#F9FAFB;}
 .err{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:12px;padding:12px;font-size:13px;color:#FF8080;margin-top:10px;display:none;}
 
-/* RULES */
-.rule-item{display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--bg);border-radius:14px;margin-bottom:10px;}
-.rule-icon{font-size:22px;flex-shrink:0;margin-top:2px;}
-.rule-text{font-size:13px;line-height:1.5;}
-.rule-text b{font-size:14px;display:block;margin-bottom:2px;}
-
-/* SETUP */
+/* ── SETUP ── */
 .avatar-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px;}
 .av-item{aspect-ratio:1;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:32px;cursor:pointer;border:2.5px solid transparent;background:var(--bg);transition:all 0.2s;}
 .av-item:hover{transform:scale(1.08);}
@@ -49,15 +46,13 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .gender-wrap{display:flex;gap:8px;margin-bottom:14px;}
 .gender-btn{flex:1;padding:10px 6px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);color:var(--muted);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;text-align:center;transition:all 0.2s;}
 .gender-btn.sel{background:rgba(168,85,247,0.2);border-color:var(--purple);color:#C084FC;}
-.age-wrap{margin-bottom:14px;}
-.age-label{font-size:13px;font-weight:800;margin-bottom:8px;}
-.age-slider{width:100%;accent-color:var(--pink);cursor:pointer;}
 .int-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
 .int-tag{padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;background:var(--bg);}
 .int-tag.sel{background:rgba(168,85,247,0.2);border-color:var(--purple);color:#C084FC;}
 .section-label{font-size:13px;font-weight:800;margin-bottom:10px;margin-top:4px;}
+.age-slider{width:100%;accent-color:var(--pink);cursor:pointer;}
 
-/* APP */
+/* ── APP SHELL ── */
 #app{min-height:100vh;}
 .mob{display:flex;flex-direction:column;min-height:100vh;}
 .hdr{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;background:rgba(10,10,20,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
@@ -65,16 +60,17 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .hdr-right{display:flex;gap:8px;}
 .icon-btn{width:38px;height:38px;border-radius:12px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;position:relative;transition:all 0.2s;}
 .icon-btn:hover{border-color:rgba(168,85,247,0.4);}
-.ndot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--pink);border-radius:50%;border:2px solid var(--bg);}
+.ndot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--pink);border-radius:50%;border:2px solid var(--bg);display:none;}
 .content{flex:1;overflow-y:auto;padding-bottom:80px;}
 .bnav{position:fixed;bottom:0;left:0;right:0;height:var(--nav);background:rgba(10,10,20,0.97);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;align-items:center;z-index:100;}
-.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;cursor:pointer;}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;cursor:pointer;position:relative;}
 .ni-icon{font-size:22px;transition:transform 0.2s;}
 .ni.active .ni-icon{transform:scale(1.15);}
 .ni-label{font-size:10px;font-weight:700;color:var(--muted);}
 .ni.active .ni-label{color:var(--pink);}
+.ni-dot{position:absolute;top:6px;right:calc(50% - 16px);width:8px;height:8px;background:var(--pink);border-radius:50%;border:2px solid var(--bg);display:none;}
 
-/* DESKTOP */
+/* ── DESKTOP ── */
 .desk{display:none;min-height:100vh;}
 .sidebar{width:250px;min-height:100vh;background:var(--surface);border-right:1px solid var(--border);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;}
 .sb-logo{padding:24px 20px 18px;border-bottom:1px solid var(--border);}
@@ -84,19 +80,31 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .sni:hover{background:rgba(255,255,255,0.04);color:var(--text);}
 .sni.active{background:linear-gradient(135deg,rgba(255,107,157,0.15),rgba(168,85,247,0.15));color:var(--text);border:1px solid rgba(255,107,157,0.2);}
 .sb-user{display:flex;align-items:center;gap:10px;padding:14px;border-top:1px solid var(--border);}
-.dmain{margin-left:250px;flex:1;}
 .dtopbar{padding:18px 28px;border-bottom:1px solid var(--border);background:rgba(15,15,30,0.97);backdrop-filter:blur(20px);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;}
 .dcontent{padding:24px 28px;max-width:760px;}
 
-/* BADGES */
+/* ── BADGES ── */
 .loc-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.25);border-radius:20px;padding:7px 14px;font-size:12px;font-weight:800;color:var(--cyan);cursor:pointer;transition:all 0.2s;}
 .loc-badge.on{background:rgba(6,182,212,0.25);border-color:var(--cyan);}
 .anon-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(168,85,247,0.12);border:1px solid rgba(168,85,247,0.25);border-radius:20px;padding:7px 14px;font-size:12px;font-weight:800;color:#C084FC;}
 
-/* PERSON CARDS */
+/* ── HOME ── */
+.welcome-banner{margin:14px 18px;background:linear-gradient(135deg,rgba(255,107,157,0.15),rgba(168,85,247,0.15));border:1px solid rgba(168,85,247,0.25);border-radius:20px;padding:18px;position:relative;overflow:hidden;}
+.welcome-banner::before{content:'🎭';position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:52px;opacity:0.15;}
+.wb-title{font-size:17px;font-weight:900;margin-bottom:4px;}
+.wb-sub{font-size:13px;color:var(--muted);line-height:1.6;}
+.stats-row{display:flex;gap:10px;padding:0 18px;margin-bottom:14px;}
+.stat-card{flex:1;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:12px 10px;text-align:center;}
+.stat-n{font-size:20px;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.stat-l{font-size:10px;color:var(--muted);font-weight:700;margin-top:2px;}
+.section-head{display:flex;align-items:center;justify-content:space-between;padding:4px 18px 10px;}
+.section-head h3{font-size:15px;font-weight:900;}
+.section-head span{font-size:12px;color:var(--muted);cursor:pointer;}
+
+/* ── PERSON CARDS ── */
 .pcard{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.2s;}
 .pcard:hover{background:rgba(255,255,255,0.02);}
-.pav{width:60px;height:60px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:34px;flex-shrink:0;position:relative;}
+.pav{width:58px;height:58px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0;position:relative;}
 .online-dot{position:absolute;bottom:3px;right:3px;width:10px;height:10px;background:var(--green);border-radius:50%;border:2px solid var(--bg);}
 .pinfo{flex:1;min-width:0;}
 .pname{font-size:15px;font-weight:800;}
@@ -105,22 +113,19 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .tag{padding:3px 10px;border-radius:8px;font-size:11px;font-weight:700;}
 .tag-loc{background:rgba(6,182,212,0.15);color:var(--cyan);}
 .tag-int{background:rgba(168,85,247,0.15);color:#C084FC;}
-.tag-gen{font-size:11px;}
 .add-btn{width:36px;height:36px;border-radius:12px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all 0.2s;flex-shrink:0;}
-.add-btn.add{background:linear-gradient(135deg,var(--pink),var(--purple));box-shadow:0 4px 12px rgba(255,107,157,0.3);}
+.add-btn.add{background:linear-gradient(135deg,var(--pink),var(--purple));}
 .add-btn.add:hover{transform:scale(1.1);}
 .add-btn.done{background:rgba(255,255,255,0.06);color:var(--muted);}
 
-/* CHAT LIST */
+/* ── CHAT LIST ── */
 .chat-item{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.2s;}
 .chat-item:hover{background:rgba(255,255,255,0.02);}
 .cav{width:50px;height:50px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;}
-.cinfo{flex:1;min-width:0;}
 .cname{font-size:14px;font-weight:800;}
 .clast{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px;}
-.unread{background:var(--pink);color:white;font-size:10px;font-weight:800;padding:2px 7px;border-radius:10px;}
 
-/* CHAT VIEW */
+/* ── CHAT VIEW ── */
 .chatview{display:flex;flex-direction:column;height:calc(100vh - var(--nav));}
 .chat-hdr{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:rgba(10,10,20,0.97);backdrop-filter:blur(20px);position:sticky;top:0;z-index:10;}
 .back-btn{font-size:26px;cursor:pointer;line-height:1;color:var(--muted);}
@@ -136,52 +141,83 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .chat-inp::placeholder{color:var(--muted);}
 .send-btn{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--pink),var(--purple));border:none;cursor:pointer;font-size:20px;transition:all 0.2s;flex-shrink:0;}
 .send-btn:hover{transform:scale(1.08);}
-.photo-btn{width:42px;height:42px;border-radius:14px;background:var(--card);border:1.5px solid var(--border);cursor:pointer;font-size:20px;transition:all 0.2s;display:flex;align-items:center;justify-content:center;}
-.photo-btn:hover{border-color:var(--cyan);}
+.icon-btn-sm{width:42px;height:42px;border-radius:14px;background:var(--card);border:1.5px solid var(--border);cursor:pointer;font-size:18px;transition:all 0.2s;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.icon-btn-sm:hover{border-color:rgba(168,85,247,0.4);}
 
-/* MSG LIMIT */
+/* ── MSG LIMIT ── */
 .mlimit{margin:12px 18px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;}
 .mlimit-num{font-size:22px;font-weight:900;color:var(--pink);}
 .mlimit-sub{font-size:11px;color:var(--muted);}
 
-/* DISCOVER */
-.disc-inp-wrap{padding:14px 18px;position:sticky;top:0;background:rgba(10,10,20,0.97);backdrop-filter:blur(20px);z-index:10;border-bottom:1px solid var(--border);}
-.disc-inp{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:13px 16px;font-family:'Nunito',sans-serif;font-size:14px;color:var(--text);outline:none;}
-.disc-inp:focus{border-color:var(--pink);}
-.disc-inp::placeholder{color:var(--muted);}
-.disc-cat{padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;color:var(--muted);transition:all 0.2s;}
-.disc-cat.active{background:linear-gradient(135deg,rgba(255,107,157,0.15),rgba(168,85,247,0.15));border-color:var(--pink);color:var(--text);}
-.disc-cat:hover{border-color:rgba(168,85,247,0.3);}
-.post-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;margin:0 16px 14px;}
+/* ── DISCOVER ── */
+.disc-write{margin:14px 18px;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:14px;}
+.disc-write-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;}
+.disc-write-av{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--surface);flex-shrink:0;}
+.disc-textarea{flex:1;background:transparent;border:none;outline:none;font-family:'Nunito',sans-serif;font-size:14px;color:var(--text);resize:none;height:64px;line-height:1.6;}
+.disc-textarea::placeholder{color:var(--muted);}
+.disc-actions{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);padding-top:10px;}
+.disc-filters{display:flex;gap:6px;padding:0 18px 10px;overflow-x:auto;}
+.disc-filter{padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;color:var(--muted);transition:all 0.2s;font-family:'Nunito',sans-serif;}
+.disc-filter.active{background:linear-gradient(135deg,rgba(255,107,157,0.15),rgba(168,85,247,0.15));border-color:var(--pink);color:var(--text);}
+.post-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;margin:0 16px 12px;}
 .post-user{display:flex;align-items:center;gap:10px;margin-bottom:10px;cursor:pointer;}
-.post-av{width:40px;height:40px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--surface);}
+.post-av{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
 .post-name{font-size:14px;font-weight:800;}
 .post-time{font-size:11px;color:var(--muted);}
-.post-content{font-size:14px;line-height:1.6;margin-bottom:12px;}
+.post-body{font-size:14px;line-height:1.6;margin-bottom:12px;}
 .post-actions{display:flex;gap:16px;}
-.post-action{font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:4px;transition:color 0.2s;}
-.post-action:hover{color:var(--pink);}
-.post-action.liked{color:var(--pink);}
+.post-act{font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:4px;transition:color 0.2s;background:none;border:none;font-family:'Nunito',sans-serif;}
+.post-act:hover{color:var(--pink);}
+.post-act.liked{color:var(--pink);}
+.trending-card{margin:0 18px 14px;background:linear-gradient(135deg,rgba(255,107,157,0.08),rgba(168,85,247,0.08));border:1px solid rgba(168,85,247,0.15);border-radius:18px;padding:14px 16px;}
+.trending-title{font-size:13px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;}
+.trending-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);cursor:pointer;}
+.trending-item:last-child{border-bottom:none;}
+.trending-rank{font-size:13px;font-weight:900;color:var(--pink);width:20px;}
+.trending-text{font-size:13px;font-weight:700;}
+.trending-count{margin-left:auto;font-size:11px;color:var(--muted);}
 
-/* PROFILE */
-.prof-banner{height:130px;position:relative;}
+/* ── GAME ── */
+.game-wrap{padding:8px 4px;}
+.dice-area{text-align:center;padding:24px 0 16px;}
+.dice{font-size:72px;display:block;cursor:pointer;transition:transform 0.15s;user-select:none;}
+.dice:hover{transform:scale(1.05);}
+.dice.rolling{animation:roll 0.5s cubic-bezier(0.34,1.56,0.64,1);}
+@keyframes roll{0%{transform:rotate(-180deg) scale(0.3);}60%{transform:rotate(20deg) scale(1.1);}100%{transform:rotate(0) scale(1);}}
+.game-btns{display:flex;gap:10px;padding:0 4px;margin-bottom:16px;}
+.game-btn{flex:1;padding:13px 8px;border-radius:14px;border:none;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;transition:all 0.2s;}
+.game-btn.truth{background:linear-gradient(135deg,#3B82F6,#06B6D4);color:white;box-shadow:0 4px 14px rgba(59,130,246,0.3);}
+.game-btn.dare{background:linear-gradient(135deg,var(--red),var(--orange));color:white;box-shadow:0 4px 14px rgba(239,68,68,0.3);}
+.game-btn:hover{transform:translateY(-2px);}
+.game-btn:disabled{opacity:0.4;transform:none;cursor:not-allowed;}
+.game-question-box{background:linear-gradient(135deg,rgba(255,107,157,0.08),rgba(168,85,247,0.08));border:1.5px solid rgba(168,85,247,0.3);border-radius:18px;padding:18px;text-align:center;margin:0 4px 14px;}
+.game-q-label{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;}
+.game-q-label.truth{color:#60A5FA;}
+.game-q-label.dare{color:#FB923C;}
+.game-q-text{font-size:16px;font-weight:800;line-height:1.6;}
+.game-timer{font-size:32px;font-weight:900;text-align:center;margin:10px 0;color:var(--pink);transition:color 0.3s;}
+.game-timer.warn{color:var(--red);}
+.game-timer-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin:0 4px 14px;}
+.game-timer-fill{height:100%;background:linear-gradient(90deg,var(--pink),var(--purple));border-radius:3px;transition:width 1s linear;}
+.game-timer-fill.warn{background:linear-gradient(90deg,var(--red),var(--orange));}
+.suggest-list{margin:0 4px;}
+.suggest-title{font-size:11px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;}
+.suggest-item{padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;font-size:13px;color:var(--muted);cursor:pointer;margin-bottom:6px;transition:all 0.2s;}
+.suggest-item:hover{border-color:var(--purple);color:var(--text);}
+
+/* ── PROFILE ── */
+.prof-banner{height:120px;position:relative;}
 .prof-avwrap{position:absolute;bottom:-34px;left:18px;width:76px;height:76px;border-radius:22px;border:4px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:44px;}
 .prof-info{padding:44px 18px 16px;}
 .prof-name{font-size:21px;font-weight:900;}
 .prof-bio{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.6;}
-.prof-stats{display:flex;gap:24px;margin:14px 0;}
+.prof-stats{display:flex;gap:20px;margin:14px 0;}
 .pstat{text-align:center;}
 .pstat-n{font-size:20px;font-weight:900;}
 .pstat-l{font-size:11px;color:var(--muted);font-weight:700;}
-.prof-btns{display:flex;gap:8px;margin-bottom:16px;}
-.btn-follow{flex:1;padding:11px;border-radius:14px;background:linear-gradient(135deg,var(--pink),var(--purple));border:none;color:white;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;}
-.btn-follow.ing{background:var(--card);border:1.5px solid var(--border);color:var(--muted);}
-.btn-msg{padding:11px 18px;border-radius:14px;background:var(--card);border:1.5px solid var(--border);color:var(--text);font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;}
-.btn-rep{padding:11px;border-radius:14px;background:rgba(239,68,68,0.1);border:1.5px solid rgba(239,68,68,0.2);color:#FF6060;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;}
 
-/* NOTIF */
+/* ── NOTIF ── */
 .nitem{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);}
-.nitem.unread{background:rgba(168,85,247,0.04);}
 .nicon{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
 .ntext{flex:1;font-size:13px;line-height:1.5;}
 .nbtns{display:flex;flex-direction:column;gap:6px;}
@@ -189,7 +225,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .nbtn.acc{background:linear-gradient(135deg,var(--pink),var(--purple));color:white;}
 .nbtn.rej{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
 
-/* SETTINGS */
+/* ── SETTINGS ── */
 .set-section{padding:18px;}
 .set-title{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;}
 .set-item{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:8px;cursor:pointer;}
@@ -203,50 +239,49 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .toggle::after{content:'';position:absolute;width:19px;height:19px;background:white;border-radius:50%;top:3px;left:3px;transition:transform 0.2s;}
 .toggle.on::after{transform:translateX(21px);}
 
-/* MODAL */
-.moverlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;display:flex;align-items:flex-end;justify-content:center;padding:0;backdrop-filter:blur(8px);}
-.mbox{background:var(--surface);border:1px solid var(--border);border-radius:28px 28px 0 0;width:100%;max-width:500px;padding:24px 22px;max-height:90vh;overflow-y:auto;}
-.mtitle{font-size:17px;font-weight:900;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;}
-.mclose{cursor:pointer;color:var(--muted);font-size:20px;}
-.rep-opt{padding:13px 14px;background:var(--bg);border-radius:12px;margin-bottom:8px;cursor:pointer;font-size:14px;font-weight:700;transition:background 0.2s;}
+/* ── MODAL ── */
+.moverlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(8px);}
+.mbox{background:var(--surface);border:1px solid var(--border);border-radius:28px 28px 0 0;width:100%;max-width:500px;padding:24px 22px 32px;max-height:90vh;overflow-y:auto;}
+.mtitle{font-size:17px;font-weight:900;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+.mclose{cursor:pointer;color:var(--muted);font-size:22px;line-height:1;}
+.rep-opt{padding:13px 14px;background:var(--bg);border-radius:12px;margin-bottom:8px;cursor:pointer;font-size:14px;font-weight:700;transition:all 0.2s;}
 .rep-opt:hover{background:rgba(239,68,68,0.1);color:var(--red);}
 
-/* TOAST */
-.toast{position:fixed;bottom:85px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--card);border:1px solid var(--border);border-radius:14px;padding:10px 18px;font-size:13px;font-weight:700;z-index:2000;opacity:0;transition:all 0.25s;white-space:nowrap;box-shadow:0 8px 28px rgba(0,0,0,0.3);}
+/* ── TOAST ── */
+.toast{position:fixed;bottom:85px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--card);border:1px solid var(--border);border-radius:14px;padding:10px 18px;font-size:13px;font-weight:700;z-index:2000;opacity:0;transition:all 0.25s;white-space:nowrap;box-shadow:0 8px 28px rgba(0,0,0,0.3);pointer-events:none;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* AD */
-.ad{margin:14px 18px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:10px;opacity:0.75;}
-.ad-lbl{font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;}
-.ad-txt{font-size:12px;color:var(--muted);}
-
-/* EMPTY */
-.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:56px 20px;gap:10px;color:var(--muted);}
-.empty-ico{font-size:52px;}
-.empty-txt{font-size:15px;font-weight:700;text-align:center;}
-.empty-sub{font-size:13px;text-align:center;line-height:1.6;}
-
-/* VOICE */
-.voice-box{text-align:center;padding:16px 0;}
+/* ── VOICE ── */
 .vwaves{display:flex;align-items:center;justify-content:center;gap:5px;height:46px;margin:14px 0;}
 .wbar{width:5px;background:linear-gradient(180deg,var(--pink),var(--purple));border-radius:3px;animation:wv 0.8s ease-in-out infinite;}
 .wbar:nth-child(2){animation-delay:0.1s;}.wbar:nth-child(3){animation-delay:0.2s;}.wbar:nth-child(4){animation-delay:0.3s;}.wbar:nth-child(5){animation-delay:0.4s;}
 @keyframes wv{0%,100%{height:8px;}50%{height:38px;}}
-.vbtns{display:flex;gap:10px;justify-content:center;margin-top:14px;}
-.vbtn{width:56px;height:56px;border-radius:18px;border:none;cursor:pointer;font-size:22px;transition:all 0.2s;}
-.vbtn.end{background:var(--red);color:white;}
-.vbtn.mute{background:var(--card);border:1.5px solid var(--border);}
+
+/* ── AD ── */
+.ad{margin:0 18px 14px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:10px;opacity:0.7;}
+.ad-lbl{font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;}
+.ad-txt{font-size:12px;color:var(--muted);}
+
+/* ── EMPTY ── */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:56px 20px;gap:10px;color:var(--muted);}
+.empty-ico{font-size:52px;}
+.empty-txt{font-size:15px;font-weight:700;}
+.empty-sub{font-size:13px;text-align:center;line-height:1.6;}
+
+/* ── RULES ── */
+.rule-item{display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--bg);border-radius:14px;margin-bottom:10px;}
+.rule-icon{font-size:22px;flex-shrink:0;margin-top:2px;}
+.rule-text b{font-size:14px;display:block;margin-bottom:2px;}
+.rule-text{font-size:13px;line-height:1.5;}
 
 @media(min-width:768px){
   .mob{display:none!important;}
   .desk{display:flex!important;}
   .moverlay{align-items:center;}
   .mbox{border-radius:28px;max-width:460px;}
+  .chatview{height:calc(100vh - 60px);}
 }
-@media(max-width:767px){
-  .desk{display:none!important;}
-  .mob{display:flex!important;}
-}
+@media(max-width:767px){.desk{display:none!important;}.mob{display:flex!important;}}
 </style>
 </head>
 <body>
@@ -254,8 +289,8 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 <div class="toast" id="toast"></div>
 <div id="modalContainer"></div>
 
-<!-- AUTH -->
-<div id="authScreen" class="screen" style="background:radial-gradient(ellipse at 30% 20%,rgba(168,85,247,0.1),transparent 60%),var(--bg);">
+<!-- --═ AUTH --═ -->
+<div id="authScreen" class="screen">
   <div class="card">
     <div class="logo">TanışBul 🎭</div>
     <div class="sub">Anonim kal, yakınındakilerle tanış!</div>
@@ -279,21 +314,21 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   </div>
 </div>
 
-<!-- RULES -->
+<!-- --═ RULES --═ -->
 <div id="rulesScreen" class="screen" style="display:none;">
   <div class="card">
     <div class="logo" style="font-size:24px;">📜 Topluluk Kuralları</div>
-    <div class="sub">TanışBul'a hoş geldin! Lütfen kurallara uy.</div>
-    <div class="rule-item"><div class="rule-icon">🚫</div><div class="rule-text"><b>Hakaret Yasak</b>Diğer kullanıcılara hakaret etmek yasaktır.</div></div>
-    <div class="rule-item"><div class="rule-icon">🔞</div><div class="rule-text"><b>Cinsel İçerik Yasak</b>Her türlü uygunsuz içerik paylaşımı yasaktır.</div></div>
-    <div class="rule-item"><div class="rule-icon">📵</div><div class="rule-text"><b>Spam Yasak</b>Tekrarlayan veya anlamsız mesajlar yasaktır.</div></div>
-    <div class="rule-item"><div class="rule-icon">🛡️</div><div class="rule-text"><b>Taciz Yasak</b>Kullanıcıları rahatsız eden davranışlar yasaktır.</div></div>
-    <div class="rule-item"><div class="rule-icon">🎭</div><div class="rule-text"><b>Anonimliğe Saygı</b>Başkalarının kimliğini açıklamak yasaktır.</div></div>
+    <div class="sub">TanışBul'a hoş geldin!</div>
+    <div class="rule-item"><div class="rule-icon">🚫</div><div class="rule-text"><b>Hakaret Yasak</b>Diğer kullanıcılara hakaret yasaktır.</div></div>
+    <div class="rule-item"><div class="rule-icon">🔞</div><div class="rule-text"><b>Cinsel İçerik Yasak</b>Uygunsuz içerik paylaşımı yasaktır.</div></div>
+    <div class="rule-item"><div class="rule-icon">📵</div><div class="rule-text"><b>Spam Yasak</b>Tekrarlayan mesajlar yasaktır.</div></div>
+    <div class="rule-item"><div class="rule-icon">🛡️</div><div class="rule-text"><b>Taciz Yasak</b>Kullanıcıları rahatsız etmek yasaktır.</div></div>
+    <div class="rule-item"><div class="rule-icon">🎭</div><div class="rule-text"><b>Anonimliğe Saygı</b>Başkasının kimliğini açıklamak yasaktır.</div></div>
     <button class="btn" style="margin-top:16px;" onclick="acceptRules()">Kabul Ediyorum ✓</button>
   </div>
 </div>
 
-<!-- SETUP -->
+<!-- --═ SETUP --═ -->
 <div id="setupScreen" class="screen" style="display:none;">
   <div class="card" style="overflow-y:auto;max-height:95vh;">
     <div class="logo" style="font-size:24px;">🎭 Profil Oluştur</div>
@@ -301,14 +336,14 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
     <div class="section-label">Avatar Seç</div>
     <div class="avatar-grid" id="avatarGrid"></div>
     <input class="inp" id="setupUsername" placeholder="Takma ad (örn: GizliKaplan)">
-    <div class="section-label" style="margin-top:4px;">Cinsiyet</div>
+    <div class="section-label">Cinsiyet</div>
     <div class="gender-wrap">
-      <div class="gender-btn" id="g-male" onclick="selGender('male')">👨 Erkek</div>
-      <div class="gender-btn" id="g-female" onclick="selGender('female')">👩 Kız</div>
-      <div class="gender-btn" id="g-other" onclick="selGender('other')">🌈 Diğer</div>
+      <div class="gender-btn" id="g-male" onclick="pickGender('male')">👨 Erkek</div>
+      <div class="gender-btn" id="g-female" onclick="pickGender('female')">👩 Kız</div>
+      <div class="gender-btn" id="g-other" onclick="pickGender('other')">🌈 Diğer</div>
     </div>
-    <div class="age-wrap">
-      <div class="age-label">Yaşın: <span id="ageVal" style="color:var(--pink);font-size:16px;">18</span></div>
+    <div style="margin-bottom:14px;">
+      <div class="section-label">Yaşın: <span id="ageVal" style="color:var(--pink);font-size:16px;">18</span></div>
       <input type="range" class="age-slider" id="setupAge" min="16" max="60" value="18" oninput="document.getElementById('ageVal').textContent=this.value">
       <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:4px;"><span>16</span><span>60+</span></div>
     </div>
@@ -319,7 +354,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   </div>
 </div>
 
-<!-- APP -->
+<!-- --═ APP --═ -->
 <div id="app" style="display:none;">
 
 <!-- MOBILE -->
@@ -327,7 +362,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   <div class="hdr">
     <div class="hdr-logo">TanışBul</div>
     <div class="hdr-right">
-      <div class="icon-btn" onclick="goPage('notifications')">🔔<div class="ndot" id="ndot" style="display:none;"></div></div>
+      <div class="icon-btn" onclick="goPage('notifications')">🔔<div class="ndot" id="ndot"></div></div>
       <div class="icon-btn" onclick="goPage('settings')">⚙️</div>
     </div>
   </div>
@@ -335,7 +370,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   <nav class="bnav">
     <div class="ni active" id="ni-home" onclick="goPage('home')"><div class="ni-icon">🏠</div><div class="ni-label">Keşfet</div></div>
     <div class="ni" id="ni-discover" onclick="goPage('discover')"><div class="ni-icon">🌍</div><div class="ni-label">Topluluk</div></div>
-    <div class="ni" id="ni-messages" onclick="goPage('messages')"><div class="ni-icon">💬</div><div class="ni-label">Mesajlar</div></div>
+    <div class="ni" id="ni-messages" onclick="goPage('messages')"><div class="ni-icon">💬</div><div class="ni-dot" id="msgDot"></div><div class="ni-label">Mesajlar</div></div>
     <div class="ni" id="ni-notifications" onclick="goPage('notifications')"><div class="ni-icon">🔔</div><div class="ni-label">Bildirim</div></div>
     <div class="ni" id="ni-profile" onclick="goPage('profile')"><div class="ni-icon">👤</div><div class="ni-label">Profil</div></div>
   </nav>
@@ -359,7 +394,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
         <div style="font-size:13px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="sbName">...</div>
         <div style="font-size:11px;color:var(--green);">● Çevrimiçi</div>
       </div>
-      <div onclick="doLogout()" style="cursor:pointer;font-size:18px;">🚪</div>
+      <div onclick="doLogout()" style="cursor:pointer;font-size:18px;padding:4px;">🚪</div>
     </div>
   </aside>
   <main style="margin-left:250px;flex:1;">
@@ -374,69 +409,68 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   </main>
 </div>
 
-</div>
+</div><!-- end app -->
 
 <script>
-// ── CONFIG ──
-const SB_URL = 'https://snbqilkkysxmzmjfsihf.supabase.co';
-const SB_KEY = 'sb_publishable_HJ2nnuGyTszm7q_2y40KDQ_GZrSUenq';
-const db = supabase.createClient(SB_URL, SB_KEY);
+// -- CONFIG --
+const SB_URL='https://snbqilkkysxmzmjfsihf.supabase.co';
+const SB_KEY='sb_publishable_HJ2nnuGyTszm7q_2y40KDQ_GZrSUenq';
+const db=supabase.createClient(SB_URL,SB_KEY);
 
-// ── STATE ──
-let me = null, myProf = null;
-let users = [], friends = [], msgs = [], notifs = [], posts = [], follows = [];
-let myLoc = null, locFilter = false;
-let msgLimit = { n: 20, resetAt: null };
-let curPage = 'home', chatWith = null;
-let selAv = null, selGenderVar = null, selInts = [];
-let lang = 'tr';
+// -- STATE --
+let me=null, myProf=null;
+let users=[], friends=[], msgs=[], notifs=[], posts=[], follows=[];
+let myLoc=null, locFilter=false;
+let msgLimit={n:20,resetAt:null};
+let curPage='home', chatWith=null;
+let selAvVar=null, selGenderVar=null, selIntsVar=[];
+let lang='tr';
+let gameTimerInterval=null;
 
-// ── AVATARS ──
-const AVS = [
-  {id:'wolf',e:'🐺',name:'Gizemli Kurt',c:'#6366F1'},
-  {id:'fox',e:'🦊',name:'Kurnaz Tilki',c:'#F97316'},
-  {id:'cat',e:'🐱',name:'Kaos Kedisi',c:'#A855F7'},
-  {id:'rabbit',e:'🐰',name:'Hızlı Tavşan',c:'#10B981'},
-  {id:'dragon',e:'🐉',name:'Ejder Ruhu',c:'#EF4444'},
-  {id:'panda',e:'🐼',name:'Sakin Panda',c:'#06B6D4'},
-  {id:'owl',e:'🦉',name:'Bilge Baykuş',c:'#FBBF24'},
-  {id:'tiger',e:'🐯',name:'Asil Kaplan',c:'#F59E0B'},
-  {id:'penguin',e:'🐧',name:'Cool Penguen',c:'#3B82F6'},
-  {id:'unicorn',e:'🦄',name:'Mistik Unicorn',c:'#EC4899'},
+// -- AVATARS --
+const AVS=[
+  {id:'wolf',e:'\uD83D\uDC3A',name:'Gizemli Kurt',c:'#6366F1'},
+  {id:'fox',e:'\uD83E\uDD8A',name:'Kurnaz Tilki',c:'#F97316'},
+  {id:'cat',e:'\uD83D\uDC31',name:'Kaos Kedisi',c:'#A855F7'},
+  {id:'rabbit',e:'\uD83D\uDC30',name:'H\u0131zl\u0131 Tav\u015Fan',c:'#10B981'},
+  {id:'dragon',e:'\uD83D\uDC09',name:'Ejder Ruhu',c:'#EF4444'},
+  {id:'panda',e:'\uD83D\uDC3C',name:'Sakin Panda',c:'#06B6D4'},
+  {id:'owl',e:'\uD83E\uDD89',name:'Bilge Bayku\u015F',c:'#FBBF24'},
+  {id:'tiger',e:'\uD83D\uDC2F',name:'Asil Kaplan',c:'#F59E0B'},
+  {id:'penguin',e:'\uD83D\uDC27',name:'Cool Penguen',c:'#3B82F6'},
+  {id:'unicorn',e:'\uD83E\uDD84',name:'Mistik Unicorn',c:'#EC4899'},
 ];
-function av(id){ return AVS.find(a=>a.id===id)||AVS[0]; }
+function av(id){return AVS.find(a=>a.id===id)||AVS[0];}
 
-// ── INTERESTS ──
-const INTS = ['🎮 Oyun','🎵 Müzik','📚 Kitap','✈️ Seyahat','⚽ Spor','🎨 Sanat','🍕 Yemek','📸 Fotoğraf','🎬 Film','💻 Teknoloji','🌿 Doğa','🎭 Tiyatro'];
+// -- INTERESTS --
+const INTS=['\uD83C\uDFAE Oyun','\uD83C\uDFB5 M\u00FCzik','\uD83D\uDCDA Kitap','\u2708\uFE0F Seyahat','\u26BD Spor','\uD83C\uDFA8 Sanat','\uD83C\uDF55 Yemek','\uD83D\uDCF8 Foto\u011Fraf','\uD83C\uDFAC Film','\uD83D\uDCBB Teknoloji','\uD83C\uDF3F Do\u011Fa','\uD83C\uDFAD Tiyatro'];
 
-// ── BAD WORDS ──
-const BAD = ['amk','oç','göt','sik','orospu','piç','ibne'];
-function filter(t){ let r=t; BAD.forEach(w=>{ r=r.replace(new RegExp(w,'gi'),'***'); }); return r; }
+// -- BAD WORDS --
+const BAD=['amk','o\u00E7','g\u00F6t','sik','orospu','pi\u00E7','ibne'];
+function filter(t){let r=t;BAD.forEach(w=>{r=r.replace(new RegExp(w,'gi'),'***');});return r;}
 
-// ── TOAST ──
-function toast(msg,ms=2500){ const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),ms); }
+// -- TOAST --
+function toast(msg,ms=2500){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),ms);}
 
-// ── SHOW SCREEN ──
+// -- SHOW SCREEN --
 function show(id){
   ['authScreen','rulesScreen','setupScreen','app'].forEach(s=>{
-    const e=document.getElementById(s);
-    if(!e) return;
-    if(s===id) e.style.display=(s==='app'?'block':'flex');
-    else e.style.display='none';
+    const e=document.getElementById(s);if(!e)return;
+    e.style.display=(s===id?(s==='app'?'block':'flex'):'none');
   });
 }
 
-// ── LANG ──
-function toggleLang(){ lang=lang==='tr'?'en':'tr'; document.getElementById('langBtn').textContent=lang==='tr'?'English':'Türkçe'; toast(lang==='tr'?'🌐 Türkçe':'🌐 English'); }
+// -- LANG --
+function toggleLang(){lang=lang==='tr'?'en':'tr';document.getElementById('langBtn').textContent=lang==='tr'?'English':'T\u00FCrk\u00E7e';toast(lang==='tr'?'\uD83C\uDF10 T\u00FCrk\u00E7e':'\uD83C\uDF10 English');}
 
-// ── AUTH ──
+// -- AUTH --
 let authMode='login';
 function switchTab(m){
   authMode=m;
   document.getElementById('tabLogin').classList.toggle('active',m==='login');
   document.getElementById('tabRegister').classList.toggle('active',m==='register');
   document.getElementById('authUsername').style.display=m==='register'?'block':'none';
-  document.getElementById('authBtn').textContent=m==='login'?'Giriş Yap':'Kayıt Ol';
+  document.getElementById('authBtn').textContent=m==='login'?'Giri\u015F Yap':'Kay\u0131t Ol';
 }
 
 async function doAuth(){
@@ -446,84 +480,80 @@ async function doAuth(){
   const errEl=document.getElementById('authErr');
   const btn=document.getElementById('authBtn');
   errEl.style.display='none';
-  btn.disabled=true; btn.textContent='...';
-  try {
+  btn.disabled=true;btn.textContent='...';
+  try{
     if(authMode==='register'){
-      if(!email||!pass||!uname) throw new Error('Tüm alanları doldur!');
-      if(pass.length<6) throw new Error('Şifre en az 6 karakter!');
+      if(!email||!pass||!uname)throw new Error('T\u00FCm alanlar\u0131 doldur!');
+      if(pass.length<6)throw new Error('\u015Eifre en az 6 karakter!');
       const {data,error}=await db.auth.signUp({email,password:pass,options:{data:{username:uname}}});
-      if(error) throw error;
+      if(error)throw error;
       me=data.user;
-      if(me){ show('rulesScreen'); return; }
-    } else {
+      if(me){show('rulesScreen');return;}
+    }else{
       const {data,error}=await db.auth.signInWithPassword({email,password:pass});
-      if(error) throw error;
+      if(error)throw error;
       me=data.user;
       await loadMyProf();
-      if(!myProf) show('rulesScreen');
+      if(!myProf)show('rulesScreen');
       else startApp();
     }
-  } catch(e){
-    errEl.textContent='❌ '+(e.message||'Hata oluştu');
-    errEl.style.display='block';
-  }
+  }catch(e){errEl.textContent='\u274C '+(e.message||'Hata');errEl.style.display='block';}
   btn.disabled=false;
-  btn.textContent=authMode==='login'?'Giriş Yap':'Kayıt Ol';
+  btn.textContent=authMode==='login'?'Giri\u015F Yap':'Kay\u0131t Ol';
 }
 
 async function googleLogin(){
   const {error}=await db.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.href}});
-  if(error) toast('❌ Google girişi başarısız');
+  if(error)toast('\u274C Google giri\u015Fi ba\u015Far\u0131s\u0131z');
 }
 
 async function doLogout(){
-  await db.auth.signOut();
-  me=null; myProf=null;
-  show('authScreen');
-  toast('👋 Görüşürüz!');
+  await db.auth.signOut();me=null;myProf=null;show('authScreen');toast('\uD83D\uDC4B G\u00F6r\u00FC\u015F\u00FCr\u00FCz!');
 }
 
-// ── RULES ──
-function acceptRules(){ show('setupScreen'); renderSetup(); }
+// -- RULES --
+function acceptRules(){show('setupScreen');renderSetup();}
 
-// ── SETUP ──
+// -- SETUP --
 function renderSetup(){
   document.getElementById('avatarGrid').innerHTML=AVS.map(a=>`<div class="av-item" id="av-${a.id}" onclick="pickAv('${a.id}')">${a.e}</div>`).join('');
   document.getElementById('interestGrid').innerHTML=INTS.map(i=>`<div class="int-tag" onclick="toggleInt(this,'${i}')">${i}</div>`).join('');
 }
-function pickAv(id){ selAv=id; document.querySelectorAll('.av-item').forEach(e=>e.classList.remove('sel')); document.getElementById('av-'+id).classList.add('sel'); }
-function selGender(g){ selGenderVar=g; document.querySelectorAll('.gender-btn').forEach(e=>e.classList.remove('sel')); document.getElementById('g-'+g).classList.add('sel'); }
-function toggleInt(el,v){ if(selInts.includes(v)){ selInts=selInts.filter(i=>i!==v); el.classList.remove('sel'); } else { if(selInts.length>=5){ toast('En fazla 5!'); return; } selInts.push(v); el.classList.add('sel'); } }
+function pickAv(id){selAvVar=id;document.querySelectorAll('.av-item').forEach(e=>e.classList.remove('sel'));document.getElementById('av-'+id)?.classList.add('sel');}
+function pickGender(g){selGenderVar=g;document.querySelectorAll('.gender-btn').forEach(e=>e.classList.remove('sel'));document.getElementById('g-'+g)?.classList.add('sel');}
+function toggleInt(el,v){
+  if(selIntsVar.includes(v)){selIntsVar=selIntsVar.filter(i=>i!==v);el.classList.remove('sel');}
+  else{if(selIntsVar.length>=5){toast('En fazla 5!');return;}selIntsVar.push(v);el.classList.add('sel');}
+}
 
 async function saveProfile(){
   const username=document.getElementById('setupUsername').value.trim();
   const age=parseInt(document.getElementById('setupAge').value)||18;
   const bio=document.getElementById('setupBio').value.trim();
-  if(!username){ toast('❌ Takma ad gir!'); return; }
-  if(!selAv){ toast('❌ Avatar seç!'); return; }
+  if(!username){toast('\u274C Takma ad gir!');return;}
+  if(!selAvVar){toast('\u274C Avatar se\u00E7!');return;}
   const loc=await getLoc();
   const {error}=await db.from('profiles').upsert({
-    id:me.id, email:me.email||'', username, age, bio,
-    avatar:selAv, gender:selGenderVar, interests:selInts,
-    lat:loc?.lat||null, lng:loc?.lng||null, city:loc?.city||null,
-    is_anon:true, lang, created_at:new Date().toISOString()
+    id:me.id,email:me.email||'',username,age,bio,
+    avatar:selAvVar,gender:selGenderVar,interests:selIntsVar,
+    lat:loc?.lat||null,lng:loc?.lng||null,city:loc?.city||null,
+    is_anon:true,lang,created_at:new Date().toISOString()
   });
-  if(error){ toast('❌ '+error.message); return; }
+  if(error){toast('\u274C '+error.message);return;}
   await loadMyProf();
   startApp();
-  toast('🎉 Hoş geldin, '+username+'!');
+  toast('\uD83C\uDF89 Ho\u015F geldin, '+username+'!');
 }
 
-// ── LOAD DATA ──
+// -- LOAD DATA --
 async function loadMyProf(){
-  if(!me) return;
+  if(!me)return;
   const {data}=await db.from('profiles').select('*').eq('id',me.id).single();
   myProf=data;
 }
-
 async function loadUsers(){
   const loc=await getLoc();
-  if(loc){ myLoc=loc; await db.from('profiles').update({lat:loc.lat,lng:loc.lng,city:loc.city}).eq('id',me.id); }
+  if(loc){myLoc=loc;await db.from('profiles').update({lat:loc.lat,lng:loc.lng,city:loc.city}).eq('id',me.id);}
   const {data}=await db.from('profiles').select('*').neq('id',me.id);
   users=data||[];
   const {data:fs}=await db.from('friendships').select('*').or('sender_id.eq.'+me.id+',receiver_id.eq.'+me.id);
@@ -531,27 +561,22 @@ async function loadUsers(){
   const {data:fls}=await db.from('follows').select('*').eq('follower_id',me.id);
   follows=fls||[];
 }
-
 async function loadMsgs(){
   const {data}=await db.from('messages').select('*').or('sender_id.eq.'+me.id+',receiver_id.eq.'+me.id).order('created_at',{ascending:false});
   msgs=data||[];
 }
-
 async function loadNotifs(){
   const {data}=await db.from('friendships').select('*').eq('receiver_id',me.id).eq('status','pending');
   notifs=(data||[]).map(f=>({...f,sender:users.find(u=>u.id===f.sender_id)||{username:'Biri',avatar:'wolf'}}));
   const dot=document.getElementById('ndot');
-  if(dot) dot.style.display=notifs.length>0?'block':'none';
+  if(dot)dot.style.display=notifs.length>0?'block':'none';
 }
-
 async function loadPosts(){
-  const {data,error}=await db.from('posts').select('*').order('created_at',{ascending:false}).limit(40);
-  if(!error && data){
-    posts=data.map(p=>({...p,author:users.find(u=>u.id===p.author_id)||(p.author_id===me.id?myProf:null)}));
-  }
+  const {data}=await db.from('posts').select('*').order('created_at',{ascending:false}).limit(50);
+  posts=(data||[]).map(p=>({...p,author:users.find(u=>u.id===p.author_id)||(p.author_id===me?.id?myProf:null)}));
 }
 
-// ── START APP ──
+// -- START APP --
 async function startApp(){
   show('app');
   await loadUsers();
@@ -565,191 +590,230 @@ async function startApp(){
 }
 
 function updateSbUser(){
-  if(!myProf) return;
+  if(!myProf)return;
   const a=av(myProf.avatar);
-  const sbAv=document.getElementById('sbAv'); if(sbAv) sbAv.textContent=a.e;
-  const sbName=document.getElementById('sbName'); if(sbName) sbName.textContent=myProf.username;
-  const deskLoc=document.getElementById('deskLoc'); if(deskLoc) deskLoc.textContent='📍 '+(myLoc?.city||'Konum...');
+  const sbAv=document.getElementById('sbAv');if(sbAv)sbAv.textContent=a.e;
+  const sbName=document.getElementById('sbName');if(sbName)sbName.textContent=myProf.username;
+  const deskLoc=document.getElementById('deskLoc');if(deskLoc)deskLoc.textContent='\uD83D\uDCCD '+(myLoc?.city||'Konum...');
 }
 
-// ── PAGE ROUTING ──
+// -- ROUTING --
 function goPage(p){
   curPage=p;
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
-  const ni=document.getElementById('ni-'+p); if(ni) ni.classList.add('active');
-  if(p==='messages') showMsgDot(false);
-  const el=document.getElementById('mobContent'); if(el) el.innerHTML=getPage(p);
+  const ni=document.getElementById('ni-'+p);if(ni)ni.classList.add('active');
+  if(p==='messages'){const d=document.getElementById('msgDot');if(d)d.style.display='none';}
+  const el=document.getElementById('mobContent');if(el)el.innerHTML=getPage(p);
 }
-
 function deskPage(p,el){
   curPage=p;
   document.querySelectorAll('.sni').forEach(n=>n.classList.remove('active'));
-  if(el) el.classList.add('active');
+  if(el)el.classList.add('active');
   const titles={home:'Ana Sayfa',discover:'Topluluk',messages:'Mesajlar',notifications:'Bildirimler',profile:'Profilim',settings:'Ayarlar'};
-  const t=document.getElementById('deskTitle'); if(t) t.textContent=titles[p]||p;
-  const cont=document.getElementById('deskContent'); if(cont) cont.innerHTML=getPage(p);
+  const t=document.getElementById('deskTitle');if(t)t.textContent=titles[p]||p;
+  const cont=document.getElementById('deskContent');if(cont)cont.innerHTML=getPage(p);
 }
-
 function render(p){
   curPage=p;
-  const mob=document.getElementById('mobContent');
-  const desk=document.getElementById('deskContent');
-  const html=getPage(p);
-  if(window.innerWidth<768){ if(mob) mob.innerHTML=html; }
-  else { if(desk) desk.innerHTML=html; }
+  const isMob=window.innerWidth<768;
+  const cont=isMob?document.getElementById('mobContent'):document.getElementById('deskContent');
+  if(cont)cont.innerHTML=getPage(p);
 }
-
 function getPage(p){
-  if(p==='home') return pageHome();
-  if(p==='discover') return pageDiscover();
-  if(p==='messages') return pageMessages();
-  if(p==='profile') return pageMyProfile();
-  if(p==='notifications') return pageNotifs();
-  if(p==='settings') return pageSettings();
+  if(p==='home')return pageHome();
+  if(p==='discover')return pageDiscover();
+  if(p==='messages')return pageMessages();
+  if(p==='profile')return pageMyProfile();
+  if(p==='notifications')return pageNotifs();
+  if(p==='settings')return pageSettings();
   return '';
 }
 
-// ── HOME ──
+// -- HOME PAGE --
 function pageHome(){
-  const list = locFilter
-    ? users.filter(u=>u.lat&&u.lng&&myLoc&&dist(myLoc.lat,myLoc.lng,u.lat,u.lng,true)<50)
-    : users;
+  const list=locFilter?users.filter(u=>u.lat&&u.lng&&myLoc&&calcDist(myLoc.lat,myLoc.lng,u.lat,u.lng,true)<50):users;
+  const genIcon={male:'\uD83D\uDC68',female:'\uD83D\uDC69',other:'\uD83C\uDF08'};
+  const frCount=friends.filter(f=>f.status==='accepted').length;
 
-  const genIcon={male:'👨',female:'👩',other:'🌈'};
+  let html='';
 
-  const html = list.length===0
-    ? '<div class="empty"><div class="empty-ico">🌍</div><div class="empty-txt">Henüz kimse yok</div><div class="empty-sub">Yakında kullanıcılar görünecek!</div></div>'
-    : list.map(u=>{
-        const a=av(u.avatar);
-        const isFr=isFriend(u.id), isPend=isPending(u.id);
-        const d=(myLoc&&u.lat&&u.lng)?dist(myLoc.lat,myLoc.lng,u.lat,u.lng):null;
-        const btn=isFr?'<button class="add-btn done" disabled>✅</button>'
-          :isPend?'<button class="add-btn done" disabled>⏳</button>'
-          :'<button class="add-btn add" onclick="addFriend(\''+u.id+'\',\''+u.username+'\',this)" title="Arkadaş Ekle">➕</button>';
-        return '<div class="pcard" onclick="openProf(\''+u.id+'\')">'+
-          '<div class="pav" style="background:linear-gradient(135deg,'+a.c+'30,'+a.c+'50);">'+a.e+'<div class="online-dot"></div></div>'+
-          '<div class="pinfo">'+
-            '<div class="pname">🎭 '+( u.username||'Anonim')+(u.age?', '+u.age:'')+(u.gender?'  <span class="tag-gen">'+(genIcon[u.gender]||'')+'</span>':'')+'</div>'+
-            '<div class="pbio">'+(u.bio||'...')+'</div>'+
-            '<div class="ptags">'+
-              (d?'<span class="tag tag-loc">📍 '+d+'</span>':(u.city?'<span class="tag tag-loc">📍 '+u.city+'</span>':''))+
-              (u.interests||[]).slice(0,2).map(i=>'<span class="tag tag-int">'+i+'</span>').join('')+
-            '</div>'+
-          '</div>'+btn+'</div>';
-      }).join('');
+  // Welcome banner
+  html+='<div class="welcome-banner"><div class="wb-title">Merhaba, \uD83C\uDFAD '+(myProf?.username||'Anonim')+'!</div><div class="wb-sub">Bug\u00FCn kimlerle tan\u0131\u015Facaks\u0131n? \u00C7evrendeki '+(list.length)+' ki\u015Fi seni bekliyor.</div></div>';
 
-  return '<div style="padding:12px 18px;display:flex;align-items:center;gap:8px;">'+
-    '<div class="loc-badge '+(locFilter?'on':'')+'" onclick="toggleLocFilter()">📍 '+(myLoc?.city||'Konum al...')+'</div>'+
-    '<div class="anon-badge">🎭 Anonim</div>'+
-    '<div style="margin-left:auto;font-size:12px;color:var(--muted);">'+list.length+' kişi</div>'+
-    '</div>'+
-    '<div class="ad"><div><div class="ad-lbl">Reklam</div><div class="ad-txt">Buraya reklam verin — tanisbul.online</div></div><div style="font-size:20px;">📢</div></div>'+
-    html;
+  // Stats
+  html+='<div class="stats-row">'+
+    '<div class="stat-card"><div class="stat-n">'+list.length+'</div><div class="stat-l">\u00C7evrimi\u00E7i</div></div>'+
+    '<div class="stat-card"><div class="stat-n">'+frCount+'</div><div class="stat-l">Arkada\u015F</div></div>'+
+    '<div class="stat-card"><div class="stat-n">'+posts.length+'</div><div class="stat-l">G\u00F6nderi</div></div>'+
+  '</div>';
+
+  // Location + filter row
+  html+='<div style="padding:0 18px 12px;display:flex;align-items:center;gap:8px;">'+
+    '<div class="loc-badge '+(locFilter?'on':'')+'" onclick="toggleLocFilter()">\uD83D\uDCCD '+(myLoc?.city||'Konum al...')+'</div>'+
+    '<div class="anon-badge">\uD83C\uDFAD Anonim</div>'+
+    '</div>';
+
+  // Ad
+  html+='<div class="ad"><div><div class="ad-lbl">Reklam</div><div class="ad-txt">Buraya reklam ver \u2014 tanisbul.online</div></div><div style="font-size:20px;">\uD83D\uDCE2</div></div>';
+
+  // Section header
+  html+='<div class="section-head"><h3>\uD83D\uDC65 Yak\u0131n\u0131ndakiler</h3><span onclick="toggleLocFilter()">'+( locFilter?'Tumunu gor':'Yakinlari filtrele')+'</span></div>';
+
+  // User list
+  if(list.length===0){
+    html+='<div class="empty"><div class="empty-ico">\uD83C\uDF0D</div><div class="empty-txt">Hen\u00FCz kimse yok</div><div class="empty-sub">Yak\u0131nda kullan\u0131c\u0131lar g\u00F6r\u00FCnecek!</div></div>';
+  }else{
+    html+=list.map(u=>{
+      const a=av(u.avatar);
+      const isFr=isFriend(u.id),isPend=isPending(u.id);
+      const d=(myLoc&&u.lat&&u.lng)?calcDist(myLoc.lat,myLoc.lng,u.lat,u.lng):null;
+      const btn=isFr?'<div class="add-btn done">\u2705</div>':
+        isPend?'<div class="add-btn done">\u23F3</div>':
+        '<div class="add-btn add" onclick="event.stopPropagation();addFriend(\''+u.id+'\',\''+u.username+'\')">\u2795</div>';
+      return '<div class="pcard" onclick="openProf(\''+u.id+'\')">' +
+        '<div class="pav" style="background:linear-gradient(135deg,'+a.c+'30,'+a.c+'50);">'+a.e+'<div class="online-dot"></div></div>'+
+        '<div class="pinfo">'+
+          '<div class="pname">\uD83C\uDFAD '+(u.username||'Anonim')+(u.age?', '+u.age:'')+(u.gender?' '+(genIcon[u.gender]||''):'')+'</div>'+
+          '<div class="pbio">'+(u.bio||'Merhaba! Tan\u0131\u015FBul\'day\u0131m \uD83D\uDC4B')+'</div>'+
+          '<div class="ptags">'+
+            (d?'<span class="tag tag-loc">\uD83D\uDCCD '+d+'</span>':(u.city?'<span class="tag tag-loc">\uD83D\uDCCD '+u.city+'</span>':''))+
+            (u.interests||[]).slice(0,2).map(i=>'<span class="tag tag-int">'+i+'</span>').join('')+
+          '</div>'+
+        '</div>'+btn+'</div>';
+    }).join('');
+  }
+  return html;
 }
 
-function toggleLocFilter(){ locFilter=!locFilter; render(curPage); }
+function toggleLocFilter(){locFilter=!locFilter;render(curPage);}
 
-// ── DISCOVER ──
+// -- DISCOVER PAGE --
+const TRENDING_TOPICS=['#Ankara','#\u0130stanbul','#Oyun','#M\u00FCzik','#Film'];
+
 function pageDiscover(){
-  const postsHtml = buildPostsHtml(posts);
-  return '<div class="disc-inp-wrap">'+
-    '<textarea class="disc-inp" id="discInp" placeholder="💬 Toplulukla bir şeyler paylaş..." style="resize:none;height:80px;"></textarea>'+
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">'+
-      '<div style="font-size:12px;color:var(--muted);">Enter ile gönder</div>'+
-      '<button class="btn btn-sm" onclick="submitPost()">Paylaş 🚀</button>'+
+  const postsHtml=buildPostsHtml(posts);
+  const myA=av(myProf?.avatar||'wolf');
+
+  return '<div class="disc-write">'+
+    '<div class="disc-write-top">'+
+      '<div class="disc-write-av">'+myA.e+'</div>'+
+      '<textarea class="disc-textarea" id="discInp" placeholder="Ne d\u00FC\u015F\u00FCn\u00FCyorsun? Toplulukla payla\u015F..."></textarea>'+
     '</div>'+
+    '<div class="disc-actions">'+
+      '<div style="display:flex;gap:8px;">'+
+        '<span style="font-size:18px;cursor:pointer;" onclick="addEmoji()">\uD83D\uDE0A</span>'+
+        '<span style="font-size:13px;color:var(--muted);margin-top:2px;">Anonim payla\u015F\u0131l\u0131r</span>'+
+      '</div>'+
+      '<button class="btn btn-sm" onclick="submitPost()">Payla\u015F \uD83D\uDE80</button>'+
     '</div>'+
-    '<div style="padding:8px 18px 0;display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;">'+
-      '<div class="disc-cat active" id="cat-all" onclick="filterPosts(\'all\',this)">🌍 Tümü</div>'+
-      '<div class="disc-cat" id="cat-hot" onclick="filterPosts(\'hot\',this)">🔥 Popüler</div>'+
-      '<div class="disc-cat" id="cat-new" onclick="filterPosts(\'new\',this)">✨ Yeni</div>'+
-    '</div>'+
-    '<div id="postList" style="padding-top:6px;">'+postsHtml+'</div>';
+  '</div>'+
+
+  '<div class="trending-card">'+
+    '<div class="trending-title">\uD83D\uDD25 Trend Konular</div>'+
+    TRENDING_TOPICS.map((t,i)=>'<div class="trending-item" onclick="document.getElementById(\'discInp\')&&(document.getElementById(\'discInp\').value=\''+t+' \')">'+
+      '<div class="trending-rank">'+(i+1)+'</div>'+
+      '<div class="trending-text">'+t+'</div>'+
+      '<div class="trending-count">'+(Math.floor(Math.random()*200)+20)+' g\u00F6nderi</div>'+
+    '</div>').join('')+
+  '</div>'+
+
+  '<div style="padding:4px 18px 0;display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;">'+
+    '<button class="disc-filter active" id="df-all" onclick="filterPosts(\'all\',this)">\uD83C\uDF0D T\u00FCm\u00FC</button>'+
+    '<button class="disc-filter" id="df-hot" onclick="filterPosts(\'hot\',this)">\uD83D\uDD25 Pop\u00FCler</button>'+
+    '<button class="disc-filter" id="df-new" onclick="filterPosts(\'new\',this)">\u2728 Yeni</button>'+
+  '</div>'+
+
+  '<div id="postList">'+postsHtml+'</div>';
 }
 
 function buildPostsHtml(list){
-  if(list.length===0) return '<div class="empty"><div class="empty-ico">💬</div><div class="empty-txt">Henüz gönderi yok</div><div class="empty-sub">İlk gönderiyi sen yap!</div></div>';
+  if(list.length===0)return '<div class="empty"><div class="empty-ico">\uD83D\uDCAC</div><div class="empty-txt">Hen\u00FCz g\u00F6nderi yok</div><div class="empty-sub">\u0130lk g\u00F6nderiyi sen yap!</div></div>';
   return list.map(p=>{
-    const a=av(p.author?.avatar);
-    const isMe=p.author_id===me.id;
+    const a=av(p.author?.avatar||'wolf');
+    const isMe=p.author_id===me?.id;
     return '<div class="post-card">'+
       '<div class="post-user" onclick="openProf(\''+p.author_id+'\')">'+
-        '<div class="post-av" style="background:linear-gradient(135deg,'+a.c+'25,'+a.c+'45);">'+a.e+'</div>'+
-        '<div style="flex:1;"><div class="post-name">🎭 '+(p.author?.username||'Anonim')+'</div>'+
+        '<div class="post-av" style="background:linear-gradient(135deg,'+a.c+'20,'+a.c+'40);">'+a.e+'</div>'+
+        '<div style="flex:1;"><div class="post-name">\uD83C\uDFAD '+(p.author?.username||'Anonim')+'</div>'+
         '<div class="post-time">'+ago(p.created_at)+'</div></div>'+
-        (isMe?'<div onclick="event.stopPropagation();deletePost(\''+p.id+'\')" style="font-size:16px;cursor:pointer;color:var(--muted);padding:4px;">🗑️</div>':'')+
+        (isMe?'<button class="post-act" onclick="event.stopPropagation();deletePost(\''+p.id+'\')">\uD83D\uDDD1\uFE0F</button>':'')+
       '</div>'+
-      '<div class="post-content">'+p.content+'</div>'+
+      '<div class="post-body">'+p.content+'</div>'+
       '<div class="post-actions">'+
-        '<div class="post-action" onclick="likePost(this,\''+p.id+'\','+p.likes+')">❤️ '+p.likes+'</div>'+
-        '<div class="post-action" onclick="replyPost(\''+( p.author?.username||'Anonim')+'\')">💬 Yanıtla</div>'+
-        '<div class="post-action" onclick="openProf(\''+p.author_id+'\')">👤 Profil</div>'+
+        '<button class="post-act" onclick="likePost(this,\''+p.id+'\','+p.likes+')">\u2764\uFE0F '+p.likes+'</button>'+
+        '<button class="post-act" onclick="replyPost(\''+( p.author?.username||'Anonim')+'\')">\uD83D\uDCAC Yan\u0131tla</button>'+
+        '<button class="post-act" onclick="openProf(\''+p.author_id+'\')">\uD83D\uDC64 Profil</button>'+
       '</div></div>';
   }).join('');
 }
 
 function filterPosts(type,el){
-  document.querySelectorAll('.disc-cat').forEach(e=>e.classList.remove('active'));
-  if(el) el.classList.add('active');
+  document.querySelectorAll('.disc-filter').forEach(e=>e.classList.remove('active'));
+  if(el)el.classList.add('active');
   let filtered=[...posts];
-  if(type==='hot') filtered=filtered.sort((a,b)=>(b.likes||0)-(a.likes||0));
-  if(type==='new') filtered=filtered.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+  if(type==='hot')filtered.sort((a,b)=>(b.likes||0)-(a.likes||0));
+  if(type==='new')filtered.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
   const list=document.getElementById('postList');
-  if(list) list.innerHTML=buildPostsHtml(filtered);
+  if(list)list.innerHTML=buildPostsHtml(filtered);
 }
 
 function replyPost(username){
   const inp=document.getElementById('discInp');
-  if(inp){ inp.value='@'+username+' '; inp.focus(); }
+  if(inp){inp.value='@'+username+' ';inp.focus();}
 }
 
-async function deletePost(id){
-  await db.from('posts').delete().eq('id',id).eq('author_id',me.id);
-  await loadPosts();
-  const list=document.getElementById('postList');
-  if(list) list.innerHTML=buildPostsHtml(posts);
-  toast('🗑️ Gönderi silindi');
+function addEmoji(){
+  const emojis=['\uD83D\uDE0A','\uD83D\uDE02','\uD83D\uDD25','\u2764\uFE0F','\uD83D\uDE0E','\uD83C\uDF89','\uD83D\uDCAA','\uD83D\uDC40','\uD83D\uDE05','\uD83D\uDE4C'];
+  const e=emojis[Math.floor(Math.random()*emojis.length)];
+  const inp=document.getElementById('discInp');
+  if(inp)inp.value+=e;
 }
 
 async function likePost(el,id,cur){
   el.classList.add('liked');
-  el.textContent='❤️ '+(cur+1);
+  el.textContent='\u2764\uFE0F '+(cur+1);
   await db.from('posts').update({likes:cur+1}).eq('id',id);
 }
 
+async function deletePost(id){
+  await db.from('posts').delete().eq('id',id).eq('author_id',me.id);
+  posts=posts.filter(p=>p.id!==id);
+  const list=document.getElementById('postList');
+  if(list)list.innerHTML=buildPostsHtml(posts);
+  toast('\uD83D\uDDD1\uFE0F Silindi');
+}
+
 async function submitPost(){
-  const inp=document.getElementById('discInp');
-  if(!inp) return;
-  const raw=inp.value.trim();
-  if(!raw){ toast('❌ Bir şeyler yaz!'); return; }
+  const inp=document.getElementById('discInp');if(!inp)return;
+  const raw=inp.value.trim();if(!raw){toast('\u274C Bir \u015Feyler yaz!');return;}
   const content=filter(raw);
   const {error}=await db.from('posts').insert({author_id:me.id,content,likes:0,created_at:new Date().toISOString()});
-  if(error){ toast('❌ Hata: '+error.message); return; }
+  if(error){toast('\u274C '+error.message);return;}
   inp.value='';
   await loadPosts();
   const list=document.getElementById('postList');
-  if(list) list.innerHTML=buildPostsHtml(posts);
-  toast('✅ Paylaşıldı!');
+  if(list)list.innerHTML=buildPostsHtml(posts);
+  toast('\u2705 Payla\u015F\u0131ld\u0131!');
 }
 
-// ── MESSAGES ──
+// -- MESSAGES --
 function pageMessages(){
   loadLimit();
   const chatList=getChatList();
   const chatsHtml=chatList.length===0
-    ? '<div class="empty"><div class="empty-ico">💬</div><div class="empty-txt">Henüz mesaj yok</div><div class="empty-sub">Birine arkadaşlık isteği gönder!</div></div>'
-    : chatList.map(c=>{
+    ?'<div class="empty"><div class="empty-ico">\uD83D\uDCAC</div><div class="empty-txt">Hen\u00FCz mesaj\u0131n yok</div><div class="empty-sub">Birine arkada\u015Fl\u0131k iste\u011Fi g\u00F6nder!</div></div>'
+    :chatList.map(c=>{
         const a=av(c.avatar);
         return '<div class="chat-item" onclick="openChat(\''+c.uid+'\',\''+c.username+'\',\''+c.avatar+'\')">'+
           '<div class="cav" style="background:linear-gradient(135deg,'+a.c+'25,'+a.c+'40);">'+a.e+'</div>'+
-          '<div class="cinfo"><div class="cname">🎭 '+c.username+'</div>'+
-          '<div class="clast">'+(c.last||'...')+'</div></div>'+
+          '<div style="flex:1;min-width:0;"><div class="cname">\uD83C\uDFAD '+c.username+'</div>'+
+          '<div class="clast">'+(c.last||'Mesajla\u015Fmaya ba\u015Fla...')+'</div></div>'+
           '<div style="text-align:right;font-size:11px;color:var(--muted);">'+c.time+'</div>'+
           '</div>';
       }).join('');
 
   return '<div class="mlimit">'+
-    '<div><div style="font-size:12px;font-weight:700;">Mesaj Hakkı</div><div class="mlimit-sub">'+getLimitTime()+'</div></div>'+
+    '<div><div style="font-size:12px;font-weight:700;">Mesaj Hakk\u0131</div><div class="mlimit-sub">'+getLimitTime()+'</div></div>'+
     '<div class="mlimit-num">'+msgLimit.n+'/20</div>'+
     '</div>'+chatsHtml;
 }
@@ -757,14 +821,14 @@ function pageMessages(){
 function getChatList(){
   return friends.filter(f=>f.status==='accepted').map(f=>{
     const uid=f.sender_id===me.id?f.receiver_id:f.sender_id;
-    const u=users.find(x=>x.id===uid); if(!u) return null;
+    const u=users.find(x=>x.id===uid);if(!u)return null;
     const m=msgs.filter(x=>(x.sender_id===me.id&&x.receiver_id===uid)||(x.sender_id===uid&&x.receiver_id===me.id));
     const last=m[0];
-    return {uid,username:u.username,avatar:u.avatar,last:last?.content,time:last?ago(last.created_at):''};
+    return {uid,username:u.username,avatar:u.avatar,last:last?.content?.startsWith('[IMG]')?'\uD83D\uDCF7 Foto\u011Fraf':last?.content,time:last?ago(last.created_at):''};
   }).filter(Boolean);
 }
 
-// ── CHAT ──
+// -- CHAT --
 function openChat(uid,username,avatarId){
   chatWith=uid;
   const a=av(avatarId);
@@ -772,183 +836,371 @@ function openChat(uid,username,avatarId){
   const msgsHtml=chatMsgs.map(m=>{
     const mine=m.sender_id===me.id;
     const isImg=m.content&&m.content.startsWith('[IMG]');
-    const body=isImg?'<img src="'+m.content.replace('[IMG]','')+'">':m.content;
-    return '<div style="display:flex;flex-direction:column;align-items:'+(mine?'flex-end':'flex-start')+';">'+
+    const isGame=m.content&&m.content.startsWith('[GAME]');
+    let body;
+    if(isImg)body='<img src="'+m.content.replace('[IMG]','')+'">';
+    else if(isGame){ body=m.content; }
+    else body=m.content;
+    return '<div style="display:flex;flex-direction:column;align-items:'+(mine?'flex-end':'flex-start')+';margin-bottom:2px;">'+
       '<div class="bubble '+(mine?'mine':'theirs')+'">'+body+'<div class="btime">'+ago(m.created_at)+'</div></div></div>';
   }).join('');
 
+  const isMob=window.innerWidth<768;
+  const topClass=isMob?'':'';
   const html='<div class="chatview">'+
     '<div class="chat-hdr">'+
-      '<div class="back-btn" onclick="goPage(\'messages\')">‹</div>'+
-      '<div style="font-size:28px;margin-right:4px;">'+a.e+'</div>'+
-      '<div><div style="font-size:15px;font-weight:800;">🎭 '+username+'</div><div style="font-size:12px;color:var(--green);">● Çevrimiçi</div></div>'+
-      '<div style="margin-left:auto;display:flex;gap:6px;">'+
-        '<div class="icon-btn" onclick="openVoice(\''+uid+'\',\''+username+'\',\''+avatarId+'\')">🎙️</div>'+
-        '<div class="icon-btn" onclick="openProf(\''+uid+'\')">👤</div>'+
-      '</div>'+
+      '<div class="back-btn" onclick="'+(isMob?'goPage(\'messages\')':'deskPage(\'messages\',document.getElementById(\'si-messages\'))')+'">'+(isMob?'\u2039':'\u2039')+'</div>'+
+      '<div style="font-size:28px;margin:0 4px;">'+a.e+'</div>'+
+      '<div style="flex:1;"><div style="font-size:15px;font-weight:800;">\uD83C\uDFAD '+username+'</div><div style="font-size:12px;color:var(--green);">\u25CF \u00C7evrimi\u00E7i</div></div>'+
+      '<div class="icon-btn-sm" onclick="openGame(\''+uid+'\',\''+username+'\',\''+avatarId+'\')" title="Oyun oyna">\uD83C\uDFB2</div>'+
+      '<div class="icon-btn-sm" onclick="openVoice(\''+uid+'\',\''+username+'\',\''+avatarId+'\')" title="Sesli g\u00F6r\u00FC\u015Fme">\uD83C\uDF99\uFE0F</div>'+
     '</div>'+
     '<div class="chat-msgs" id="chatMsgs">'+msgsHtml+'</div>'+
     '<div class="chat-bar">'+
       '<input type="file" id="photoInp" accept="image/*" style="display:none;" onchange="sendPhoto(this)">'+
-      '<div class="photo-btn" onclick="document.getElementById(\'photoInp\').click()">📷</div>'+
+      '<div class="icon-btn-sm" onclick="document.getElementById(\'photoInp\').click()">\uD83D\uDCF7</div>'+
       '<input class="chat-inp" id="msgInp" placeholder="Mesaj yaz..." onkeydown="if(event.key===\'Enter\')sendMsg(\''+uid+'\')">'+
-      '<button class="send-btn" onclick="sendMsg(\''+uid+'\')">➤</button>'+
+      '<button class="send-btn" onclick="sendMsg(\''+uid+'\')">\u27A4</button>'+
     '</div></div>';
 
-  const isMob=window.innerWidth<768;
   const cont=isMob?document.getElementById('mobContent'):document.getElementById('deskContent');
-  if(cont){ cont.innerHTML=html; const m=document.getElementById('chatMsgs'); if(m) m.scrollTop=m.scrollHeight; }
+  if(cont){cont.innerHTML=html;const m=document.getElementById('chatMsgs');if(m)m.scrollTop=m.scrollHeight;}
 }
 
 async function sendMsg(toId){
-  const inp=document.getElementById('msgInp'); if(!inp) return;
-  const raw=inp.value.trim(); if(!raw) return;
-  if(msgLimit.n<=0){ toast('⏳ Mesaj hakkın bitti! '+getLimitTime()); return; }
+  const inp=document.getElementById('msgInp');if(!inp)return;
+  const raw=inp.value.trim();if(!raw)return;
+  if(msgLimit.n<=0){toast('\u23F3 Mesaj hakk\u0131n bitti! '+getLimitTime());return;}
   const content=filter(raw);
   const {error}=await db.from('messages').insert({sender_id:me.id,receiver_id:toId,content,created_at:new Date().toISOString()});
-  if(!error){
-    inp.value=''; decLimit();
-    await loadMsgs();
-    const u=users.find(x=>x.id===toId);
-    if(u) openChat(u.id,u.username,u.avatar);
-  }
+  if(!error){inp.value='';decLimit();await loadMsgs();const u=users.find(x=>x.id===toId);if(u)openChat(u.id,u.username,u.avatar);}
 }
 
 async function sendPhoto(input){
-  const file=input.files[0]; if(!file) return;
-  if(file.size>2*1024*1024){ toast('❌ Fotoğraf 2MB\'dan küçük olmalı!'); return; }
-  if(msgLimit.n<=0){ toast('⏳ Mesaj hakkın bitti!'); return; }
+  const file=input.files[0];if(!file)return;
+  if(file.size>2*1024*1024){toast('\u274C Max 2MB!');return;}
+  if(msgLimit.n<=0){toast('\u23F3 Mesaj hakk\u0131n bitti!');return;}
   const reader=new FileReader();
   reader.onload=async(e)=>{
     const {error}=await db.from('messages').insert({sender_id:me.id,receiver_id:chatWith,content:'[IMG]'+e.target.result,created_at:new Date().toISOString()});
-    if(!error){ decLimit(); await loadMsgs(); const u=users.find(x=>x.id===chatWith); if(u) openChat(u.id,u.username,u.avatar); }
+    if(!error){decLimit();await loadMsgs();const u=users.find(x=>x.id===chatWith);if(u)openChat(u.id,u.username,u.avatar);}
   };
   reader.readAsDataURL(file);
 }
 
-// ── VOICE ──
-function openVoice(uid,username,avatarId){
-  const a=av(avatarId);
-  showModal('<div class="voice-box">'+
-    '<div style="font-size:60px;margin-bottom:12px;">'+a.e+'</div>'+
-    '<div style="font-size:17px;font-weight:900;">🎭 '+username+'</div>'+
-    '<div style="font-size:12px;color:var(--green);margin-top:4px;">● Sesli görüşme</div>'+
-    '<div class="vwaves"><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div></div>'+
-    '<div class="vbtns">'+
-      '<button class="vbtn mute" onclick="toast(\'🔇 Mikrofon kapatıldı\')">🔇</button>'+
-      '<button class="vbtn end" onclick="closeModal();toast(\'📵 Görüşme bitti\')">📵</button>'+
-    '</div>'+
-    '<div style="font-size:11px;color:var(--muted);margin-top:12px;">⚠️ Sesli sohbet yakında aktif olacak</div>'+
-    '</div>','🎙️ Sesli Görüşme');
+// -- GAME --
+const TRUTH_QS=[
+  'En son ne zaman yalan s\u00F6yledin?',
+  'Gizlice kime a\u015F\u0131k oldun?',
+  'Hayat\u0131nda en \u00E7ok pi\u015Fman oldu\u011Fun \u015Fey ne?',
+  'En k\u00F6t\u00FC huysun nedir?',
+  'Seni en \u00E7ok kim k\u0131zd\u0131r\u0131r ve neden?',
+  'Hi\u00E7 \u00E7ok utand\u0131\u011F\u0131n bir an ya\u015Fad\u0131n m\u0131?',
+  'En b\u00FCy\u00FCk korkun ne?',
+  'Hayatta de\u011Fi\u015Ftirmek istedi\u011Fin bir \u015Fey nedir?',
+  'En tuhaf hayalin ne?',
+  '\u015Eu an akl\u0131na gelen en garip d\u00FC\u015F\u00FCnce ne?',
+];
+const DARE_QS=[
+  'En komik selfie\'ni \u00E7ek ve g\u00F6nder!',
+  '10 saniye boyunca tavuk gibi ses \u00E7\u0131kar \uD83D\uDC14',
+  'Favori \u015Fark\u0131n\u0131n en y\u00FCksek sesini s\u00F6yle!',
+  'G\u00F6zlerin kapal\u0131 bir emoji kombinasyonu yaz!',
+  'Sana en yak\u0131n ki\u015Fiye \'Seni seviyorum\' de!',
+  'En garip yapt\u0131\u011F\u0131n \u015Feyi anlat!',
+  '\u015Eu an yan\u0131ndaki ilk nesneyi ba\u015F\u0131na tak, selfie \u00E7ek!',
+  '5 saniye boyunca robot gibi konu\u015F!',
+  'Bir dakika hi\u00E7 g\u00FClmemeye \u00E7al\u0131\u015F!',
+  'Telefon rehberindeki 5. ki\u015Fiye \'Hayat\u0131m\' diye mesaj at!',
+];
+
+const DICE_FACES=['\u2680','\u2681','\u2682','\u2683','\u2684','\u2685'];
+
+function openGame(uid, username, avatarId){
+  showModal(renderGame(uid, username, avatarId, null, null), '\uD83C\uDFB2 Do\u011Fruluk mu Cesaret mi?');
 }
 
-// ── MSG LIMIT ──
+function renderGame(uid, username, avatarId, question, qtype){
+  const a=av(avatarId);
+  let html='<div class="game-wrap">';
+
+  html+='<div class="dice-area">'+
+    '<div class="dice" id="gameDice" onclick="rollDice(\''+uid+'\',\''+username+'\',\''+avatarId+'\')">'+DICE_FACES[Math.floor(Math.random()*6)]+'</div>'+
+    '<div style="font-size:13px;color:var(--muted);margin-top:8px;">Zara t\u0131kla!</div>'+
+  '</div>';
+
+  html+='<div class="game-btns">'+
+    '<button class="game-btn truth" onclick="pickQuestion(\'truth\',\''+uid+'\',\''+username+'\',\''+avatarId+'\')">\uD83D\uDD35 Do\u011Fruluk</button>'+
+    '<button class="game-btn dare" onclick="pickQuestion(\'dare\',\''+uid+'\',\''+username+'\',\''+avatarId+'\')">\uD83D\uDD34 Cesaret</button>'+
+  '</div>';
+
+  if(question&&qtype){
+    html+='<div class="game-question-box">'+
+      '<div class="game-q-label '+qtype+'">'+(qtype==='truth'?'\uD83D\uDD35 DO\u011ERULUK':'\uD83D\uDD34 CESARET')+'</div>'+
+      '<div class="game-q-text">'+question+'</div>'+
+    '</div>'+
+    '<div class="game-timer" id="gameTimer">\u23F1 40</div>'+
+    '<div class="game-timer-bar"><div class="game-timer-fill" id="gameTimerFill" style="width:100%;"></div></div>'+
+    '<div style="display:flex;gap:8px;margin-bottom:16px;">'+
+      '<button class="btn btn-outline btn-sm" style="flex:1;" onclick="sendGameQuestion(\''+uid+'\',\''+qtype+'\',\''+question.replace(/'/g,"\\'")+'\')" >\uD83D\uDCAC G\u00F6nder</button>'+
+      '<button class="btn btn-sm" style="flex:1;" onclick="pickQuestion(\''+qtype+'\',\''+uid+'\',\''+username+'\',\''+avatarId+'\')">\uD83D\uDD04 Yeni Soru</button>'+
+    '</div>';
+    startGameTimer();
+  }
+
+  // Suggest questions
+  const _tqs=TRUTH_QS.slice(0,3).map(q=>'<div class="suggest-item" onclick="pickSuggest(\'truth\',this,\''+uid+'\',\''+username+'\',\''+avatarId+'\')" data-q="'+encodeURIComponent(q)+'">\uD83D\uDD35 '+q+'</div>').join('');
+  const _dqs=DARE_QS.slice(0,3).map(q=>'<div class="suggest-item" onclick="pickSuggest(\'dare\',this,\''+uid+'\',\''+username+'\',\''+avatarId+'\')" data-q="'+encodeURIComponent(q)+'">\uD83D\uDD34 '+q+'</div>').join('');
+  html+='<div class="suggest-list"><div class="suggest-title">\uD83D\uDCA1 \u00D6rnek Sorular</div>'+_tqs+_dqs+'</div>';
+  '</div>';
+
+  html+='</div>';
+  return html;
+}
+
+function rollDice(uid, username, avatarId){
+  const dice=document.getElementById('gameDice');
+  if(!dice)return;
+  dice.classList.remove('rolling');
+  void dice.offsetWidth;
+  dice.classList.add('rolling');
+  const face=DICE_FACES[Math.floor(Math.random()*6)];
+  dice.textContent=face;
+  toast('\uD83C\uDFB2 Zar at\u0131ld\u0131! '+face);
+}
+
+function pickQuestion(qtype, uid, username, avatarId){
+  const qs=qtype==='truth'?TRUTH_QS:DARE_QS;
+  const q=qs[Math.floor(Math.random()*qs.length)];
+  if(gameTimerInterval){clearInterval(gameTimerInterval);gameTimerInterval=null;}
+  document.getElementById('modalContainer').innerHTML='';
+  setTimeout(()=>showModal(renderGame(uid,username,avatarId,q,qtype),'\uD83C\uDFB2 Do\u011Fruluk mu Cesaret mi?'),50);
+}
+
+function useQuestion(qtype, question, _x, uid, username, avatarId){
+  if(gameTimerInterval){clearInterval(gameTimerInterval);gameTimerInterval=null;}
+  document.getElementById('modalContainer').innerHTML='';
+  setTimeout(()=>showModal(renderGame(uid,username,avatarId,question,qtype),'\uD83C\uDFB2 Do\u011Fruluk mu Cesaret mi?'),50);
+}
+
+function pickSuggest(qtype, el, uid, username, avatarId){
+  const q=decodeURIComponent(el.getAttribute('data-q'));
+  if(gameTimerInterval){clearInterval(gameTimerInterval);gameTimerInterval=null;}
+  document.getElementById('modalContainer').innerHTML='';
+  setTimeout(()=>showModal(renderGame(uid,username,avatarId,q,qtype),'\uD83C\uDFB2 Do\u011Fruluk mu Cesaret mi?'),50);
+}
+
+function startGameTimer(){
+  if(gameTimerInterval){clearInterval(gameTimerInterval);gameTimerInterval=null;}
+  let sec=40;
+  gameTimerInterval=setInterval(()=>{
+    sec--;
+    const el=document.getElementById('gameTimer');
+    const fill=document.getElementById('gameTimerFill');
+    if(el){
+      el.textContent='\u23F1 '+sec;
+      el.classList.toggle('warn',sec<=10);
+    }
+    if(fill){
+      fill.style.width=((sec/40)*100)+'%';
+      fill.classList.toggle('warn',sec<=10);
+    }
+    if(sec<=0){
+      clearInterval(gameTimerInterval);gameTimerInterval=null;
+      if(el)el.textContent='\u231B S\u00FCre Doldu!';
+      toast('\u231B S\u00FCre doldu!');
+    }
+  },1000);
+}
+
+async function sendGameQuestion(toId, qtype, question){
+  const content='[GAME]'+JSON.stringify({type:qtype,question});
+  const text=(qtype==='truth'?'\uD83D\uDD35 Do\u011Fruluk: ':'\uD83D\uDD34 Cesaret: ')+question;
+  await db.from('messages').insert({sender_id:me.id,receiver_id:toId,content:text,created_at:new Date().toISOString()});
+  if(gameTimerInterval){clearInterval(gameTimerInterval);gameTimerInterval=null;}
+  closeModal();
+  await loadMsgs();
+  const u=users.find(x=>x.id===toId);
+  if(u)openChat(u.id,u.username,u.avatar);
+  toast('\uD83C\uDFB2 Soru g\u00F6nderildi!');
+}
+
+// -- VOICE --
+function openVoice(uid, username, avatarId){
+  const a=av(avatarId);
+  showModal('<div style="text-align:center;padding:16px 0;">'+
+    '<div style="font-size:60px;margin-bottom:12px;">'+a.e+'</div>'+
+    '<div style="font-size:17px;font-weight:900;">\uD83C\uDFAD '+username+'</div>'+
+    '<div style="font-size:12px;color:var(--green);margin-top:4px;">\u25CF Sesli g\u00F6r\u00FC\u015Fme</div>'+
+    '<div class="vwaves"><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div></div>'+
+    '<div style="display:flex;gap:10px;justify-content:center;margin-top:14px;">'+
+      '<button style="width:56px;height:56px;border-radius:18px;border:1.5px solid var(--border);background:var(--card);font-size:22px;cursor:pointer;" onclick="toast(\'\uD83D\uDD07 Mikrofon kapat\u0131ld\u0131\')">\uD83D\uDD07</button>'+
+      '<button style="width:56px;height:56px;border-radius:18px;border:none;background:var(--red);font-size:22px;cursor:pointer;color:white;" onclick="closeModal();toast(\'\uD83D\uDCF5 G\u00F6r\u00FC\u015Fme bitti\')">\uD83D\uDCF5</button>'+
+    '</div>'+
+    '<div style="font-size:11px;color:var(--muted);margin-top:14px;">\u26A0\uFE0F Sesli sohbet yak\u0131nda aktif olacak</div>'+
+  '</div>','\uD83C\uDF99\uFE0F Sesli G\u00F6r\u00FC\u015Fme');
+}
+
+// -- MSG LIMIT --
 function loadLimit(){
   const s=localStorage.getItem('tb_lim');
-  if(s){ const d=JSON.parse(s); if(d.resetAt&&Date.now()>d.resetAt){ msgLimit={n:20,resetAt:null}; localStorage.removeItem('tb_lim'); } else msgLimit=d; }
+  if(s){const d=JSON.parse(s);if(d.resetAt&&Date.now()>d.resetAt){msgLimit={n:20,resetAt:null};localStorage.removeItem('tb_lim');}else msgLimit=d;}
 }
-function decLimit(){ msgLimit.n=Math.max(0,msgLimit.n-1); if(msgLimit.n===0) msgLimit.resetAt=Date.now()+30*60*1000; localStorage.setItem('tb_lim',JSON.stringify(msgLimit)); }
-function getLimitTime(){
-  if(!msgLimit.resetAt||msgLimit.n>0) return '';
-  const left=msgLimit.resetAt-Date.now(); if(left<=0){ loadLimit(); return ''; }
-  return Math.ceil(left/60000)+' dk sonra yenilenir';
-}
+function decLimit(){msgLimit.n=Math.max(0,msgLimit.n-1);if(msgLimit.n===0)msgLimit.resetAt=Date.now()+30*60*1000;localStorage.setItem('tb_lim',JSON.stringify(msgLimit));}
+function getLimitTime(){if(!msgLimit.resetAt||msgLimit.n>0)return '';const left=msgLimit.resetAt-Date.now();if(left<=0){loadLimit();return '';}return Math.ceil(left/60000)+' dk sonra yenilenir';}
 
-// ── MY PROFILE ──
+// -- MY PROFILE --
 function pageMyProfile(){
-  if(!myProf) return '<div class="empty"><div class="empty-ico">👤</div></div>';
+  if(!myProf)return '<div class="empty"><div class="empty-ico">\uD83D\uDC64</div></div>';
   const a=av(myProf.avatar);
   return '<div>'+
     '<div class="prof-banner" style="background:linear-gradient(135deg,'+a.c+'40,'+a.c+'15);">'+
       '<div class="prof-avwrap">'+a.e+'</div>'+
     '</div>'+
     '<div class="prof-info">'+
-      '<div class="prof-name">🎭 '+(myProf.username||'Anonim')+'</div>'+
+      '<div class="prof-name">\uD83C\uDFAD '+(myProf.username||'Anonim')+'</div>'+
       '<div style="font-size:12px;color:var(--cyan);margin-top:2px;">'+a.name+'</div>'+
-      '<div class="prof-bio">'+(myProf.bio||'Henüz bio yok')+'</div>'+
+      '<div class="prof-bio">'+(myProf.bio||'Hen\u00FCz bio yok. D\u00FCzenle!')+'</div>'+
       '<div class="prof-stats">'+
-        '<div class="pstat"><div class="pstat-n">'+friends.filter(f=>f.status==='accepted').length+'</div><div class="pstat-l">Arkadaş</div></div>'+
-        '<div class="pstat"><div class="pstat-n">'+(myProf.age||'—')+'</div><div class="pstat-l">Yaş</div></div>'+
-        '<div class="pstat"><div class="pstat-n">'+(myProf.city||'—')+'</div><div class="pstat-l">Şehir</div></div>'+
+        '<div class="pstat"><div class="pstat-n">'+friends.filter(f=>f.status==='accepted').length+'</div><div class="pstat-l">Arkada\u015F</div></div>'+
+        '<div class="pstat"><div class="pstat-n">'+(myProf.age||'\u2014')+'</div><div class="pstat-l">Ya\u015F</div></div>'+
+        '<div class="pstat"><div class="pstat-n">'+(myProf.city||'\u2014')+'</div><div class="pstat-l">\u015Eehir</div></div>'+
+        '<div class="pstat"><div class="pstat-n">'+posts.filter(p=>p.author_id===me?.id).length+'</div><div class="pstat-l">G\u00F6nderi</div></div>'+
       '</div>'+
       '<div class="int-grid">'+(myProf.interests||[]).map(i=>'<div class="int-tag sel">'+i+'</div>').join('')+'</div>'+
       '<div style="display:flex;gap:8px;margin-top:16px;">'+
-        '<button class="btn" style="flex:1;" onclick="openEditProfile()">✏️ Profili Düzenle</button>'+
-        '<button class="btn btn-outline btn-sm" onclick="doLogout()">🚪 Çıkış</button>'+
+        '<button class="btn" style="flex:1;" onclick="openEditProfile()">\u270F\uFE0F Profili D\u00FCzenle</button>'+
+        '<button class="btn btn-outline btn-sm" onclick="doLogout()">\uD83D\uDEAA \u00C7\u0131k\u0131\u015F</button>'+
       '</div>'+
     '</div></div>';
 }
 
-// ── USER PROFILE ──
+// -- USER PROFILE --
 function openProf(uid){
-  if(!uid||uid==='undefined') return;
-  if(uid===me.id){ goPage('profile'); closeModal(); return; }
-  const u=users.find(x=>x.id===uid); if(!u) return;
+  if(!uid||uid==='undefined'||uid==='null')return;
+  if(uid===me?.id){
+    const isMob=window.innerWidth<768;
+    if(isMob)goPage('profile');else deskPage('profile',document.getElementById('si-profile'));
+    return;
+  }
+  const u=users.find(x=>x.id===uid);if(!u)return;
   const a=av(u.avatar);
-  const isFollowing=follows.some(f=>f.following_id===uid);
   const isFr=isFriend(uid);
-  const genIcon={male:'👨 Erkek',female:'👩 Kız',other:'🌈 Diğer'};
-  showModal('<div>'+
+  const isPend=isPending(uid);
+  const genIcon={male:'\uD83D\uDC68 Erkek',female:'\uD83D\uDC69 K\u0131z',other:'\uD83C\uDF08 Di\u011Fer'};
+
+  let btnHtml='';
+  if(isFr){
+    btnHtml='<button class="btn" onclick="closeModal();directMsg(\''+u.id+'\',\''+u.username+'\',\''+u.avatar+'\')">\uD83D\uDCAC Mesaj G\u00F6nder</button>';
+  }else if(isPend){
+    btnHtml='<button class="btn btn-outline" disabled>\u23F3 \u0130stek G\u00F6nderildi</button>';
+  }else{
+    btnHtml='<button class="btn" onclick="addFriend(\''+u.id+'\',\''+u.username+'\')">\u2795 Arkada\u015F Ekle</button>';
+  }
+
+  showModal(
     '<div style="text-align:center;margin-bottom:16px;">'+
-      '<div style="font-size:56px;">'+a.e+'</div>'+
-      '<div style="font-size:18px;font-weight:900;margin-top:6px;">🎭 '+(u.username||'Anonim')+'</div>'+
-      '<div style="font-size:12px;color:var(--cyan);">'+a.name+'</div>'+
+      '<div style="font-size:60px;margin-bottom:10px;">'+a.e+'</div>'+
+      '<div style="font-size:20px;font-weight:900;">\uD83C\uDFAD '+(u.username||'Anonim')+'</div>'+
+      '<div style="font-size:12px;color:var(--cyan);margin-top:2px;">'+a.name+'</div>'+
       (u.gender?'<div style="font-size:12px;color:var(--muted);margin-top:4px;">'+(genIcon[u.gender]||'')+'</div>':'')+
     '</div>'+
-    '<div style="font-size:13px;color:var(--muted);margin-bottom:14px;">'+(u.bio||'...')+'</div>'+
-    '<div style="display:flex;gap:16px;margin-bottom:16px;text-align:center;">'+
-      '<div><div style="font-size:18px;font-weight:900;">'+(u.age||'—')+'</div><div style="font-size:11px;color:var(--muted);">Yaş</div></div>'+
-      '<div><div style="font-size:18px;font-weight:900;">'+(u.city||'—')+'</div><div style="font-size:11px;color:var(--muted);">Şehir</div></div>'+
+    (u.bio?'<div style="font-size:13px;color:var(--muted);margin-bottom:14px;text-align:center;">'+u.bio+'</div>':'')+
+    '<div style="display:flex;gap:20px;margin-bottom:16px;justify-content:center;">'+
+      '<div style="text-align:center;"><div style="font-size:20px;font-weight:900;">'+(u.age||'\u2014')+'</div><div style="font-size:11px;color:var(--muted);">Ya\u015F</div></div>'+
+      (u.city?'<div style="text-align:center;"><div style="font-size:16px;font-weight:900;">'+u.city+'</div><div style="font-size:11px;color:var(--muted);">\u015Eehir</div></div>':'')+
     '</div>'+
-    '<div class="int-grid">'+(u.interests||[]).map(i=>'<div class="int-tag sel">'+i+'</div>').join('')+'</div>'+
-    '<div class="prof-btns" style="margin-top:14px;">'+
-      (isFr
-        ?'<button class="btn-follow" style="background:linear-gradient(135deg,var(--pink),var(--purple));" onclick="closeModal();goPage(\'messages\');setTimeout(()=>openChat(\''+u.id+'\',\''+u.username+'\',\''+u.avatar+'\'),100)">💬 Mesaj Gönder</button>'
-        :'<button class="btn-follow" onclick="addFriend(\''+u.id+'\',\''+u.username+'\',this)">➕ Arkadaş Ekle</button>')+
-      '<button class="btn-rep" onclick="showReport(\''+uid+'\',\''+u.username+'\')">🚩</button>'+
-    '</div></div>','👤 Profil');
+    (u.interests&&u.interests.length?'<div class="int-grid" style="justify-content:center;">'+u.interests.map(i=>'<div class="int-tag sel">'+i+'</div>').join('')+'</div>':'')+
+    '<div style="display:flex;flex-direction:column;gap:8px;margin-top:16px;">'+
+      btnHtml+
+      '<button class="btn btn-outline btn-sm" style="color:var(--red);border-color:rgba(239,68,68,0.3);" onclick="showReport(\''+uid+'\',\''+u.username+'\')">\uD83D\uDEA9 \u015Eikayet Et</button>'+
+    '</div>',
+  '\uD83D\uDC64 '+u.username
+  );
 }
 
-async function toggleFollow(uid,btn){
-  const isF=follows.some(f=>f.following_id===uid);
-  if(isF){
-    await db.from('follows').delete().eq('follower_id',me.id).eq('following_id',uid);
-    follows=follows.filter(f=>f.following_id!==uid);
-    btn.className='btn-follow'; btn.textContent='Takip Et';
-  } else {
-    await db.from('follows').insert({follower_id:me.id,following_id:uid,created_at:new Date().toISOString()});
-    follows.push({follower_id:me.id,following_id:uid});
-    btn.className='btn-follow ing'; btn.textContent='Takip Ediliyor';
-  }
+function directMsg(uid, username, avatarId){
+  closeModal();
+  chatWith=uid;
+  const isMob=window.innerWidth<768;
+  if(isMob){curPage='messages';document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));document.getElementById('ni-messages')?.classList.add('active');}
+  else{curPage='messages';document.querySelectorAll('.sni').forEach(n=>n.classList.remove('active'));document.getElementById('si-messages')?.classList.add('active');}
+  openChat(uid, username, avatarId);
 }
 
-// ── REPORT ──
+// -- EDIT PROFILE --
+function openEditProfile(){
+  if(!myProf)return;
+  const mg=myProf.gender||'';
+  window._editGender=mg;
+  showModal(
+    '<textarea class="inp" id="editBio" style="resize:none;height:80px;" placeholder="Bio...">'+(myProf.bio||'')+'</textarea>'+
+    '<div style="font-size:13px;font-weight:800;margin-bottom:8px;margin-top:4px;">Ya\u015F\u0131n: <span id="editAgeVal" style="color:var(--pink);">'+(myProf.age||18)+'</span></div>'+
+    '<input type="range" class="age-slider" id="editAge" min="16" max="60" value="'+(myProf.age||18)+'" oninput="document.getElementById(\'editAgeVal\').textContent=this.value" style="width:100%;margin-bottom:16px;">'+
+    '<div style="font-size:13px;font-weight:800;margin-bottom:8px;">Cinsiyet</div>'+
+    '<div style="display:flex;gap:8px;margin-bottom:16px;">'+
+      '<div class="gender-btn '+(mg==='male'?'sel':'')+'" id="eg-male" onclick="selEditGender(this,\'male\')">\uD83D\uDC68 Erkek</div>'+
+      '<div class="gender-btn '+(mg==='female'?'sel':'')+'" id="eg-female" onclick="selEditGender(this,\'female\')">\uD83D\uDC69 K\u0131z</div>'+
+      '<div class="gender-btn '+(mg==='other'?'sel':'')+'" id="eg-other" onclick="selEditGender(this,\'other\')">\uD83C\uDF08 Di\u011Fer</div>'+
+    '</div>'+
+    '<div style="font-size:13px;font-weight:800;margin-bottom:8px;">Avatar</div>'+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">'+
+      AVS.map(a=>'<div style="width:42px;height:42px;border-radius:12px;border:2px solid '+(myProf.avatar===a.id?'var(--pink)':'var(--border)')+';background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;" id="ea-'+a.id+'" onclick="selEditAv(this,\''+a.id+'\')">'+a.e+'</div>').join('')+
+    '</div>'+
+    '<button class="btn" onclick="saveEditProfile()">\uD83D\uDCBE Kaydet</button>',
+  '\u270F\uFE0F Profili D\u00FCzenle');
+  window._editAv=myProf.avatar;
+}
+
+function selEditGender(el,g){
+  window._editGender=g;
+  document.querySelectorAll('#eg-male,#eg-female,#eg-other').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+}
+function selEditAv(el,id){
+  window._editAv=id;
+  document.querySelectorAll('[id^="ea-"]').forEach(e=>e.style.borderColor='var(--border)');
+  el.style.borderColor='var(--pink)';
+}
+
+async function saveEditProfile(){
+  const bio=document.getElementById('editBio')?.value.trim();
+  const age=parseInt(document.getElementById('editAge')?.value)||18;
+  const gender=window._editGender;
+  const avatar=window._editAv||myProf.avatar;
+  const {error}=await db.from('profiles').update({bio,age,gender,avatar}).eq('id',me.id);
+  if(error){toast('\u274C '+error.message);return;}
+  await loadMyProf();
+  closeModal();
+  render(curPage);
+  toast('\u2705 Profil g\u00FCncellendi!');
+}
+
+// -- REPORT --
 function showReport(uid,username){
   closeModal();
-  setTimeout(()=>{
-    showModal('<div style="font-size:13px;color:var(--muted);margin-bottom:14px;">@'+username+' kullanıcısını şikayet ediyorsun</div>'+
-      '<div class="rep-opt" onclick="submitReport(\''+uid+'\',\'spam\')">📵 Spam</div>'+
-      '<div class="rep-opt" onclick="submitReport(\''+uid+'\',\'harassment\')">😡 Taciz</div>'+
-      '<div class="rep-opt" onclick="submitReport(\''+uid+'\',\'inappropriate\')">🔞 Uygunsuz içerik</div>'+
-      '<div class="rep-opt" onclick="submitReport(\''+uid+'\',\'fake\')">🤥 Sahte profil</div>'+
-      '<div class="rep-opt" onclick="submitReport(\''+uid+'\',\'other\')">❓ Diğer</div>',
-    '🚩 Şikayet Et');
-  },200);
+  setTimeout(()=>showModal(
+    '<div style="font-size:13px;color:var(--muted);margin-bottom:14px;">@'+username+' \u015Fikayet ediliyor</div>'+
+    '<div class="rep-opt" onclick="submitReport(\''+uid+'\',\'spam\')">\uD83D\uDCF5 Spam</div>'+
+    '<div class="rep-opt" onclick="submitReport(\''+uid+'\',\'harassment\')">\uD83D\uDE21 Taciz</div>'+
+    '<div class="rep-opt" onclick="submitReport(\''+uid+'\',\'inappropriate\')">\uD83D\uDD1E Uygunsuz \u0130\u00E7erik</div>'+
+    '<div class="rep-opt" onclick="submitReport(\''+uid+'\',\'fake\')">\uD83E\uDD25 Sahte Profil</div>'+
+    '<div class="rep-opt" onclick="submitReport(\''+uid+'\',\'other\')">\u2753 Di\u011Fer</div>',
+  '\uD83D\uDEA9 \u015Eikayet Et'),200);
 }
-
 async function submitReport(uid,reason){
   await db.from('reports').insert({reporter_id:me.id,reported_id:uid,reason,created_at:new Date().toISOString()});
-  closeModal(); toast('✅ Şikayetin alındı!');
+  closeModal();toast('\u2705 \u015Eikayetin al\u0131nd\u0131!');
 }
 
-// ── NOTIFICATIONS ──
+// -- NOTIFICATIONS --
 function pageNotifs(){
-  if(notifs.length===0) return '<div class="empty"><div class="empty-ico">🔔</div><div class="empty-txt">Bildirim yok</div></div>';
+  if(notifs.length===0)return '<div class="empty"><div class="empty-ico">\uD83D\uDD14</div><div class="empty-txt">Bildirim yok</div><div class="empty-sub">Arkada\u015Fl\u0131k isteklerin burada g\u00F6r\u00FCnecek.</div></div>';
   return '<div style="padding-top:6px;">'+notifs.map(n=>{
-    const a=av(n.sender?.avatar);
-    return '<div class="nitem unread">'+
+    const a=av(n.sender?.avatar||'wolf');
+    return '<div class="nitem">'+
       '<div class="nicon" style="background:rgba(255,107,157,0.12);">'+a.e+'</div>'+
-      '<div class="ntext"><b>🎭 '+(n.sender?.username||'Biri')+'</b> sana arkadaşlık isteği gönderdi</div>'+
+      '<div class="ntext"><b>\uD83C\uDFAD '+(n.sender?.username||'Biri')+'</b> sana arkada\u015Fl\u0131k iste\u011Fi g\u00F6nderdi</div>'+
       '<div class="nbtns">'+
         '<button class="nbtn acc" onclick="accFriend(\''+n.id+'\',\''+n.sender_id+'\')">Kabul</button>'+
         '<button class="nbtn rej" onclick="rejFriend(\''+n.id+'\')">Reddet</button>'+
@@ -958,207 +1210,137 @@ function pageNotifs(){
 
 async function accFriend(id,senderId){
   await db.from('friendships').update({status:'accepted'}).eq('id',id);
-  await loadUsers(); await loadMsgs(); await loadNotifs();
-  render(curPage); toast('✅ Arkadaşlık kabul edildi!');
+  await loadUsers();await loadMsgs();await loadNotifs();
+  render(curPage);toast('\u2705 Arkada\u015Fl\u0131k kabul edildi!');
 }
-
 async function rejFriend(id){
   await db.from('friendships').delete().eq('id',id);
-  await loadNotifs(); render(curPage); toast('❌ Reddedildi');
+  await loadNotifs();render(curPage);toast('\u274C Reddedildi');
 }
 
-// ── SETTINGS ──
+// -- SETTINGS --
 function pageSettings(){
   return '<div class="set-section">'+
     '<div class="set-title">Hesap</div>'+
     '<div class="set-item">'+
-      '<div class="set-left"><div class="set-icon" style="background:rgba(168,85,247,0.15);">🎭</div>'+
-      '<div><div class="set-label">'+(myProf?.username||'Kullanıcı')+'</div><div class="set-sub">'+(me?.email||'')+'</div></div></div>'+
+      '<div class="set-left"><div class="set-icon" style="background:rgba(168,85,247,0.15);">\uD83C\uDFAD</div>'+
+      '<div><div class="set-label">'+(myProf?.username||'...')+'</div><div class="set-sub">'+(me?.email||'')+'</div></div></div>'+
     '</div>'+
-    '<div class="set-title" style="margin-top:18px;">Uygulama</div>'+
+    '<div class="set-title" style="margin-top:16px;">Uygulama</div>'+
     '<div class="set-item" onclick="toggleLang()">'+
-      '<div class="set-left"><div class="set-icon" style="background:rgba(6,182,212,0.15);">🌐</div>'+
-      '<div><div class="set-label">Dil</div><div class="set-sub">'+(lang==='tr'?'Türkçe':'English')+'</div></div></div>'+
-      '<div style="color:var(--muted);">›</div>'+
+      '<div class="set-left"><div class="set-icon" style="background:rgba(6,182,212,0.15);">\uD83C\uDF10</div>'+
+      '<div><div class="set-label">Dil</div><div class="set-sub">'+(lang==='tr'?'T\u00FCrk\u00E7e':'English')+'</div></div></div>'+
+      '<div style="color:var(--muted);">\u203A</div>'+
     '</div>'+
     '<div class="set-item">'+
-      '<div class="set-left"><div class="set-icon" style="background:rgba(255,107,157,0.15);">🎭</div>'+
-      '<div><div class="set-label">Anonim Mod</div><div class="set-sub">Kimliğin gizli</div></div></div>'+
+      '<div class="set-left"><div class="set-icon" style="background:rgba(255,107,157,0.15);">\uD83C\uDFAD</div>'+
+      '<div><div class="set-label">Anonim Mod</div><div class="set-sub">Kimli\u011Fin gizli</div></div></div>'+
       '<div class="toggle on"></div>'+
     '</div>'+
-    '<div class="set-title" style="margin-top:18px;">Diğer</div>'+
-    '<div class="set-item" onclick="toast(\'📜 Gizlilik politikası\')">'+
-      '<div class="set-left"><div class="set-icon" style="background:rgba(16,185,129,0.15);">📜</div>'+
-      '<div><div class="set-label">Gizlilik Politikası</div></div></div><div style="color:var(--muted);">›</div>'+
+    '<div class="set-title" style="margin-top:16px;">Di\u011Fer</div>'+
+    '<div class="set-item" onclick="toast(\'\uD83D\uDCDC Gizlilik politikas\u0131 yak\u0131nda\')">'+
+      '<div class="set-left"><div class="set-icon" style="background:rgba(16,185,129,0.15);">\uD83D\uDCDC</div>'+
+      '<div><div class="set-label">Gizlilik Politikas\u0131</div></div></div><div style="color:var(--muted);">\u203A</div>'+
     '</div>'+
     '<div class="set-item" onclick="doLogout()" style="margin-top:6px;">'+
-      '<div class="set-left"><div class="set-icon" style="background:rgba(239,68,68,0.15);">🚪</div>'+
-      '<div><div class="set-label" style="color:var(--red);">Çıkış Yap</div></div></div>'+
+      '<div class="set-left"><div class="set-icon" style="background:rgba(239,68,68,0.15);">\uD83D\uDEAA</div>'+
+      '<div><div class="set-label" style="color:var(--red);">\u00C7\u0131k\u0131\u015F Yap</div></div></div>'+
     '</div></div>';
 }
 
-// ── FRIENDSHIPS ──
-function isFriend(id){ return friends.some(f=>f.status==='accepted'&&(f.sender_id===id||f.receiver_id===id)); }
-function isPending(id){ return friends.some(f=>f.status==='pending'&&(f.sender_id===id||f.receiver_id===id)); }
+// -- FRIENDSHIPS --
+function isFriend(id){return friends.some(f=>f.status==='accepted'&&(f.sender_id===id||f.receiver_id===id));}
+function isPending(id){return friends.some(f=>f.status==='pending'&&(f.sender_id===id||f.receiver_id===id));}
 
-async function addFriend(toId,username,btn){
-  if(btn){ btn.disabled=true; btn.textContent='⏳'; }
+async function addFriend(toId,username){
   const {error}=await db.from('friendships').insert({sender_id:me.id,receiver_id:toId,status:'pending',created_at:new Date().toISOString()});
-  if(!error){ toast('➕ '+username+' kişisine istek gönderildi!'); await loadUsers(); render(curPage); }
-  else { toast('❌ '+error.message); if(btn){ btn.disabled=false; btn.textContent='➕'; } }
+  if(!error){toast('\u2795 '+username+' ki\u015Fisine istek g\u00F6nderildi!');friends.push({sender_id:me.id,receiver_id:toId,status:'pending'});render(curPage);}
+  else if(error.code==='23505')toast('\u23F3 Zaten istek g\u00F6nderilmi\u015F!');
+  else toast('\u274C '+error.message);
 }
 
-// ── REALTIME ──
+// -- REALTIME --
 function setupRealtime(){
   db.channel('tb_msgs').on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},async(p)=>{
     const m=p.new;
     if(m.receiver_id===me.id){
       await loadMsgs();
-      // Show notification toast
       const sender=users.find(x=>x.id===m.sender_id);
-      const sname=sender?.username||'Biri';
       const sav=av(sender?.avatar||'wolf');
       if(curPage!=='messages'&&chatWith!==m.sender_id){
-        toast(sav.e+' '+sname+' mesaj gönderdi!',3500);
-        // Flash message nav icon
-        const ni=document.getElementById('ni-messages');
-        if(ni){ ni.style.color='var(--pink)'; setTimeout(()=>ni.style.color='',3000); }
-        // Show unread dot on nav
-        showMsgDot(true);
+        toast(sav.e+' '+(sender?.username||'Biri')+' sana mesaj g\u00F6nderdi!',3500);
+        const d=document.getElementById('msgDot');if(d)d.style.display='block';
       }
-      if(chatWith&&(chatWith===m.sender_id||chatWith===m.receiver_id)){
-        const u=users.find(x=>x.id===chatWith);
-        if(u) openChat(u.id,u.username,u.avatar);
-      }
-    } else if(m.sender_id===me.id){
+      if(chatWith===m.sender_id){const u=users.find(x=>x.id===chatWith);if(u)openChat(u.id,u.username,u.avatar);}
+    }else if(m.sender_id===me.id){
       await loadMsgs();
-      if(chatWith===m.receiver_id){
-        const u=users.find(x=>x.id===chatWith);
-        if(u) openChat(u.id,u.username,u.avatar);
-      }
+      if(chatWith===m.receiver_id){const u=users.find(x=>x.id===chatWith);if(u)openChat(u.id,u.username,u.avatar);}
     }
   }).subscribe();
 }
 
-let _msgDot = false;
-function showMsgDot(show){
-  _msgDot=show;
-  const ni=document.getElementById('ni-messages');
-  if(!ni) return;
-  let dot=document.getElementById('msg-dot');
-  if(show && !dot){
-    dot=document.createElement('span');
-    dot.id='msg-dot';
-    dot.style.cssText='position:absolute;top:-2px;right:-2px;width:10px;height:10px;background:var(--pink);border-radius:50%;border:2px solid var(--bg);display:block;';
-    ni.querySelector('.ni-icon').style.position='relative';
-    ni.querySelector('.ni-icon').appendChild(dot);
-  } else if(!show && dot){
-    dot.remove();
-  }
-}
-
-// ── EDIT PROFILE ──
-function openEditProfile(){
-  if(!myProf) return;
-  const mg = myProf.gender||'';
-  const html = '<div>'+
-    '<textarea class="inp" id="editBio" style="resize:none;height:76px;" placeholder="Bio...">'+(myProf.bio||'')+'</textarea>'+
-    '<div style="font-size:13px;font-weight:800;margin-bottom:8px;">Yaşın: <span id="editAgeVal" style="color:var(--pink);">'+(myProf.age||18)+'</span></div>'+
-    '<input type="range" class="age-slider" id="editAge" min="16" max="60" value="'+(myProf.age||18)+'" oninput="document.getElementById(\'editAgeVal\').textContent=this.value" style="width:100%;margin-bottom:14px;">'+
-    '<div style="font-size:13px;font-weight:800;margin-bottom:8px;">Cinsiyet</div>'+
-    '<div style="display:flex;gap:8px;margin-bottom:14px;">'+
-      '<div class="gender-btn '+(mg==='male'?'sel':'')+'" id="eg-male" onclick="selEditGender(this,\'male\')">👨 Erkek</div>'+
-      '<div class="gender-btn '+(mg==='female'?'sel':'')+'" id="eg-female" onclick="selEditGender(this,\'female\')">👩 Kız</div>'+
-      '<div class="gender-btn '+(mg==='other'?'sel':'')+'" id="eg-other" onclick="selEditGender(this,\'other\')">🌈 Diğer</div>'+
-    '</div>'+
-    '<button class="btn" onclick="saveEditProfile()">💾 Kaydet</button>'+
-  '</div>';
-  window._editGender = mg;
-  showModal(html,'✏️ Profili Düzenle');
-}
-function selEditGender(g){
-  window._editGender = g;
-  document.querySelectorAll('#eg-male,#eg-female,#eg-other').forEach(e=>e.classList.remove('sel'));
-  const el = document.getElementById('eg-'+g); if(el) el.classList.add('sel');
-}
-
-async function saveEditProfile(){
-  const bio = document.getElementById('editBio')?.value.trim();
-  const age = parseInt(document.getElementById('editAge')?.value)||18;
-  const gender = window._editGender;
-  const {error} = await db.from('profiles').update({bio,age,gender}).eq('id',me.id);
-  if(error){ toast('❌ '+error.message); return; }
-  await loadMyProf();
-  closeModal();
-  render(curPage);
-  toast('✅ Profil güncellendi!');
-}
-
-// ── MODAL ──
+// -- MODAL --
 function showModal(content,title=''){
   document.getElementById('modalContainer').innerHTML=
-    '<div class="moverlay" onclick="closeModal(event)">'+
-      '<div class="mbox" onclick="event.stopPropagation()">'+
-        (title?'<div class="mtitle">'+title+'<span class="mclose" onclick="closeModal()">✕</span></div>':
-               '<div style="text-align:right;margin-bottom:10px;"><span class="mclose" onclick="closeModal()">✕</span></div>')+
+    '<div class="moverlay" onclick="if(event.target===this){if(gameTimerInterval){clearInterval(gameTimerInterval);gameTimerInterval=null;}closeModal();}">'+
+      '<div class="mbox">'+
+        '<div class="mtitle">'+(title||'')+'<span class="mclose" onclick="if(gameTimerInterval){clearInterval(gameTimerInterval);gameTimerInterval=null;}closeModal()">\u2715</span></div>'+
         content+
       '</div></div>';
 }
-function closeModal(e){ if(e&&e.target!==e.currentTarget) return; document.getElementById('modalContainer').innerHTML=''; }
+function closeModal(){document.getElementById('modalContainer').innerHTML='';}
 
-// ── LOCATION ──
+// -- LOCATION --
 async function getLoc(){
   return new Promise(resolve=>{
-    if(!navigator.geolocation){ resolve(null); return; }
+    if(!navigator.geolocation){resolve(null);return;}
     navigator.geolocation.getCurrentPosition(async pos=>{
-      const {latitude:lat,longitude:lng}=pos.coords;
+      const{latitude:lat,longitude:lng}=pos.coords;
       try{
         const r=await fetch('https://nominatim.openstreetmap.org/reverse?lat='+lat+'&lon='+lng+'&format=json');
         const d=await r.json();
         const city=d.address?.city||d.address?.town||d.address?.county||'Bilinmiyor';
-        myLoc={lat,lng,city}; resolve(myLoc);
-      }catch{ myLoc={lat,lng,city:'Bilinmiyor'}; resolve(myLoc); }
+        myLoc={lat,lng,city};resolve(myLoc);
+      }catch{myLoc={lat,lng,city:'Bilinmiyor'};resolve(myLoc);}
     },()=>resolve(null),{timeout:5000});
   });
 }
 
-function dist(lat1,lng1,lat2,lng2,raw=false){
+function calcDist(lat1,lng1,lat2,lng2,raw=false){
   const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLng=(lng2-lng1)*Math.PI/180;
   const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
   const d=R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-  if(raw) return d;
+  if(raw)return d;
   return d<1?Math.round(d*1000)+' m':Math.round(d)+' km';
 }
 
-// ── HELPERS ──
+// -- HELPERS --
 function ago(dateStr){
-  if(!dateStr) return '';
+  if(!dateStr)return '';
   const diff=Date.now()-new Date(dateStr).getTime();
   const m=Math.floor(diff/60000),h=Math.floor(diff/3600000),d=Math.floor(diff/86400000);
-  if(m<1) return 'Az önce'; if(m<60) return m+'dk'; if(h<24) return h+'sa'; return d+'g';
+  if(m<1)return 'Az \u00F6nce';if(m<60)return m+'dk';if(h<24)return h+'sa';return d+'g';
 }
 
-// ── INIT ──
+// -- INIT --
 async function init(){
-  const {data:{session}}=await db.auth.getSession();
+  const{data:{session}}=await db.auth.getSession();
   if(session){
     me=session.user;
     await loadMyProf();
-    if(!myProf){ show('setupScreen'); renderSetup(); }
+    if(!myProf){show('setupScreen');renderSetup();}
     else startApp();
-  } else {
-    show('authScreen');
-  }
+  }else{show('authScreen');}
 }
 
 db.auth.onAuthStateChange(async(event,session)=>{
   if(event==='SIGNED_IN'&&session&&!me){
     me=session.user;
     await loadMyProf();
-    if(!myProf) show('rulesScreen');
+    if(!myProf)show('rulesScreen');
     else startApp();
   }
-  if(event==='SIGNED_OUT'){ me=null; myProf=null; show('authScreen'); }
+  if(event==='SIGNED_OUT'){me=null;myProf=null;show('authScreen');}
 });
 
 init();

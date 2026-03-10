@@ -1131,19 +1131,55 @@ function pageGame(){
     '<div style="font-size:14px;color:var(--muted);">Arkadasınla oyna, sınırları zorla!</div>'+
   '</div>';
 
-  // FRIEND-ONLY GATE
+  // FRIEND-ONLY GATE + PENDING REQUESTS
   if(frList.length===0){
-    html+='<div style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;text-align:center;margin-bottom:16px;">'+
-      '<div style="font-size:52px;margin-bottom:12px;">\uD83D\uDD12</div>'+
-      '<div style="font-size:18px;font-weight:900;margin-bottom:8px;">Oyun Kilitli</div>'+
-      '<div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px;">Oyun oynamak icin once arkadasin olmali! Ana sayfaya git, birilerine arkadas istegi gonder, kabul edince gel.</div>'+
+    html+='<div style="background:var(--card);border:2px solid rgba(168,85,247,.2);border-radius:22px;padding:30px;text-align:center;margin-bottom:14px;">'+
+      '<div style="font-size:56px;margin-bottom:14px;">\uD83D\uDD12</div>'+
+      '<div style="font-size:20px;font-weight:900;margin-bottom:10px;">Oyun Odasi Kilitli</div>'+
+      '<div style="font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:20px;">'+
+        'Bu odaya girebilmek icin en az 1 onaylanmis arkadasin olmali.<br>'+
+        'Biri seni eklediginde ve <b style="color:var(--text);">sen onayladiginda</b> oda otomatik acilir.'+
+      '</div>'+
       '<button class="btn" onclick="goPage(\'home\')">\uD83D\uDC65 Arkadas Bul</button>'+
     '</div>';
+
+    // Show pending requests so user can accept and unlock game
+    var pendList=friends.filter(function(f){return f.status==='pending';}).map(function(f){
+      var uid=f.sender_id===me.id?f.receiver_id:f.sender_id;
+      var u=users.find(function(x){return x.id===uid;});
+      return u?{user:u,sent:f.sender_id===me.id}:null;
+    }).filter(Boolean);
+
+    if(pendList.length>0){
+      html+='<div style="background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.3);border-radius:18px;padding:16px;">'+
+        '<div style="font-size:12px;font-weight:900;color:var(--orange);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;">'+
+          '\u23F3 Bekleyen Arkadaslik Istekleri ('+pendList.length+')</div>'+
+        pendList.map(function(p){
+          var a=av(p.user.avatar);
+          return '<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);">'+
+            '<div style="font-size:24px;width:42px;height:42px;flex-shrink:0;background:'+a.c+'22;border-radius:12px;display:flex;align-items:center;justify-content:center;">'+a.e+'</div>'+
+            '<div style="flex:1;">'+
+              '<div style="font-size:13px;font-weight:800;">\uD83C\uDFAD '+p.user.username+'</div>'+
+              '<div style="font-size:11px;color:var(--muted);">'+( p.sent ? 'Kabul bekleniyor...' : 'Sana arkadaslik istegi gonderdi!' )+'</div>'+
+            '</div>'+
+            ( !p.sent
+              ? ('<button style="padding:8px 16px;border-radius:10px;background:linear-gradient(135deg,var(--pink),var(--purple));color:white;border:none;font-size:12px;font-weight:800;cursor:pointer;" onclick="accFriendGame(\''+p.user.id+'\')">' +
+                 '\u2714 Kabul Et</button>')
+              : '<span style="font-size:11px;color:var(--muted);">\u23F3 Bekliyor</span>'
+            )+
+          '</div>';
+        }).join('')+
+        '<div style="margin-top:12px;text-align:center;font-size:12px;color:var(--muted);">\uD83C\uDF89 Kabul edince oyun odasi otomatik acilacak!</div>'+
+      '</div>';
+    }
+
     html+='</div>';
     return html;
   }
+
   // Show partner selector if none selected
   if(!gamePartner){
+
     html+='<div style="margin-bottom:16px;">'+
       '<div style="font-size:13px;font-weight:800;color:var(--muted);margin-bottom:10px;">KİMLE OYNAMAK İSTİYORSUN?</div>'+
       frList.map(function(u){
@@ -1661,6 +1697,19 @@ function pageNotifs(){
   }).join('')+'</div>';
 }
 
+async function accFriendGame(userId){
+  var fr=friends.find(function(f){
+    return f.status==='pending' && f.sender_id===userId && f.receiver_id===me.id;
+  });
+  if(!fr){toast('\u274C Istek bulunamadi');return;}
+  await db.from('friendships').update({status:'accepted'}).eq('id',fr.id);
+  friends=friends.map(function(f){return f.id===fr.id?Object.assign({},f,{status:'accepted'}):f;});
+  await loadUsers();
+  toast('\uD83C\uDF89 Arkadaslik kabul edildi! Oyun odasi aciliyor...');
+  gamePartner=null;
+  setTimeout(function(){ render('game'); }, 1000);
+}
+
 async function accFriend(id,senderId){
   await db.from('friendships').update({status:'accepted'}).eq('id',id);
   await loadUsers();await loadMsgs();await loadNotifs();render(curPage);toast('\u2705 Arkadaslik kabul edildi!');
@@ -1961,16 +2010,16 @@ function openSubscription(){
       }).join('')+
     '</div>'+
     '<div style="display:flex;gap:10px;margin-bottom:14px;">'+
-      '<div style="flex:1;background:var(--card);border:2px solid var(--border);border-radius:16px;padding:14px;text-align:center;cursor:pointer;" onclick="selectPlan(this,\'monthly\')" id="plan-monthly">'+
+      '<div style="flex:1;background:var(--card);border:2px solid var(--border);border-radius:16px;padding:14px;text-align:center;cursor:pointer;" onclick="selectPlan(this,\'weekly\')" id="plan-weekly">'+
+        '<div style="font-size:11px;color:var(--muted);font-weight:800;">HAFTALIK</div>'+
+        '<div style="font-size:24px;font-weight:900;margin:6px 0;">9\u20BA</div>'+
+        '<div style="font-size:11px;color:var(--muted);">/ hafta</div>'+
+      '</div>'+
+      '<div style="flex:1;background:var(--card);border:2px solid var(--pink);border-radius:16px;padding:14px;text-align:center;cursor:pointer;position:relative;" onclick="selectPlan(this,\'monthly\')" id="plan-monthly">'+
+        '<div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--pink),var(--purple));color:white;font-size:10px;font-weight:900;padding:3px 10px;border-radius:10px;">POPULER</div>'+
         '<div style="font-size:11px;color:var(--muted);font-weight:800;">AYLIK</div>'+
         '<div style="font-size:24px;font-weight:900;margin:6px 0;">29\u20BA</div>'+
-        '<div style="font-size:11px;color:var(--muted);">/ ay</div>'+
-      '</div>'+
-      '<div style="flex:1;background:var(--card);border:2px solid var(--pink);border-radius:16px;padding:14px;text-align:center;cursor:pointer;position:relative;" onclick="selectPlan(this,\'yearly\')" id="plan-yearly">'+
-        '<div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--pink),var(--purple));color:white;font-size:10px;font-weight:900;padding:3px 10px;border-radius:10px;">EN IYI</div>'+
-        '<div style="font-size:11px;color:var(--muted);font-weight:800;">YILLIK</div>'+
-        '<div style="font-size:24px;font-weight:900;margin:6px 0;">199\u20BA</div>'+
-        '<div style="font-size:11px;color:var(--green);font-weight:700;">%43 tasarruf</div>'+
+        '<div style="font-size:11px;color:var(--green);font-weight:700;">En populer secim</div>'+
       '</div>'+
     '</div>'+
     '<button class="btn" onclick="startPayment()">\uD83D\uDC8E Premium\'a Gec</button>'+
@@ -1979,8 +2028,9 @@ function openSubscription(){
 }
 function selectPlan(el,plan){
   selectedPlan=plan;
-  var pm=document.getElementById('plan-monthly');var py=document.getElementById('plan-yearly');
-  if(pm)pm.style.borderColor='var(--border)';if(py)py.style.borderColor='var(--border)';
+  ['plan-weekly','plan-monthly'].forEach(function(id){
+    var e2=document.getElementById(id);if(e2)e2.style.borderColor='var(--border)';
+  });
   if(el)el.style.borderColor='var(--pink)';
 }
 function startPayment(){
@@ -1992,16 +2042,25 @@ function startPayment(){
         '<div style="font-size:16px;font-weight:900;margin-bottom:14px;">Odeme Bilgileri</div>'+
         '<div style="background:var(--bg);border-radius:14px;padding:14px;margin-bottom:10px;text-align:left;">'+
           '<div style="font-size:11px;color:var(--muted);font-weight:800;margin-bottom:6px;">SECILEN PLAN</div>'+
-          '<div style="font-size:15px;font-weight:900;">'+(selectedPlan==='monthly'?'Aylik \u2014 29\u20BA':'Yillik \u2014 199\u20BA')+'</div>'+
+          '<div style="font-size:15px;font-weight:900;">'+(selectedPlan==='weekly'?'Haftalik \u2014 9\u20BA':'Aylik \u2014 29\u20BA')+'</div>'+
         '</div>'+
         '<div style="background:var(--bg);border-radius:14px;padding:14px;margin-bottom:10px;text-align:left;">'+
           '<div style="font-size:11px;color:var(--muted);font-weight:800;margin-bottom:8px;">HAVALE / EFT</div>'+
           '<div style="font-size:13px;margin-bottom:5px;">\uD83C\uDFE6 Banka: <b>Ziraat Bankasi</b></div>'+
-          '<div style="font-size:13px;margin-bottom:5px;word-break:break-all;">\uD83D\uDCCC IBAN: <b>TR12 0001 0012 3456 7890 1234 56</b></div>'+
-          '<div style="font-size:13px;margin-bottom:5px;">\uD83D\uDC64 Alici: <b>TanishBul Yazilim</b></div>'+
-          '<div style="background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.3);border-radius:10px;padding:8px;margin-top:8px;font-size:12px;color:var(--orange);">\u26A0\uFE0F Aciklama kismina kullanici adinizi yazin!</div>'+
+          '<div style="font-size:13px;margin-bottom:5px;word-break:break-all;">\uD83D\uDCCC IBAN: <b>TR37 0006 4000 0014 2511 3840 98</b></div>'+
+          '<div style="font-size:13px;margin-bottom:5px;">\uD83D\uDC64 Alici: <b>Melih Mutlu</b></div>'+
+          '<div style="background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.3);border-radius:10px;padding:8px;margin-top:8px;font-size:12px;color:var(--orange);">\u26A0\uFE0F Aciklama kismina DOGRULAMA KODUNU yaz!</div>'+
         '</div>'+
-        '<div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Odeme sonrasi <b>destek@tanisbul.online</b> adresine dekont gonderin. 24s icinde aktif edilir.</div>'+
+        '<div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:12px;padding:12px;margin-bottom:10px;">'+
+          '<div style="font-size:11px;font-weight:900;color:var(--green);margin-bottom:6px;">\u2705 ODEME DOGRULAMA KODU</div>'+
+          '<div style="font-size:20px;font-weight:900;letter-spacing:.12em;font-family:monospace;margin:4px 0;" id="payRef">'+getPayRef()+'</div>'+
+          '<div style="font-size:11px;color:var(--muted);">Bu kodu havale aciklamasina yaz. Odemenizi bu kodla eslestiriyoruz.</div>'+
+        '</div>'+
+        '<div style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.7;">'+
+          'Odeme sonrasi <b>destek@tanisbul.online</b> adresine<br>'+
+          'Konu: <b>TanishBul Premium - [Dogrulama Kodun]</b><br>'+
+          'Dekont fotografiyla gonder. <b>24 saat icinde</b> aktif edilir.'+
+        '</div>'+
         '<a href="https://www.instagram.com/tanisbulonline/" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#E1306C,#833AB4);color:white;padding:12px;border-radius:14px;text-decoration:none;font-weight:800;font-size:14px;margin-bottom:8px;">\uD83D\uDCF8 Instagram\'dan da ulasabilirsin</a>'+
         '<button class="btn btn-outline" onclick="closeModal()">Kapat</button>'+
       '</div>',
@@ -2009,6 +2068,15 @@ function startPayment(){
   },150);
 }
 
+
+function getPayRef(){
+  if(!me)return 'TB'+Math.random().toString(36).substr(2,6).toUpperCase();
+  var uid=me.id.replace(/-/g,'').substr(0,4).toUpperCase();
+  var ts=Date.now().toString(36).substr(-4).toUpperCase();
+  var ref='TB-'+uid+'-'+ts;
+  localStorage.setItem('tb_payref',ref);
+  return ref;
+}
 
 init();
 </script>

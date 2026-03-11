@@ -756,16 +756,17 @@ function hideLoading(){
 async function startApp(){
   show('app');
   hideLoading();
+  applyNightMode();
+  render('home'); // render immediately with empty state
   await loadUsers();
   await loadMsgs();
   await loadNotifs();
   await loadPosts();
   loadLimit();
   updateSbUser();
-  applyNightMode();
   calcBadges();
   startSocialProofToasts();
-  render('home');
+  render('home'); // re-render with loaded data
   setupRealtime();
   updateAnonFog();
 }
@@ -1902,45 +1903,40 @@ function ago(dateStr){
 }
 
 // INIT - clean Supabase v2 session restore
-var initDone=false;
-async function init(){
-  // Try getSession immediately - this reads localStorage token
-  try{
-    var r=await db.auth.getSession();
-    var s=(r.data&&r.data.session)?r.data.session:null;
-    if(s&&s.user){
-      initDone=true;
-      me=s.user;
+// AUTH - single source of truth via onAuthStateChange
+// Supabase v2 fires INITIAL_SESSION on every page load
+db.auth.onAuthStateChange(async function(event,session){
+  if(event==='INITIAL_SESSION'){
+    if(session&&session.user){
+      me=session.user;
       await loadMyProf();
       if(!myProf){hideLoading();show('setupScreen');renderSetup();}
       else startApp();
     }else{
-      initDone=true;
-      show('authScreen');hideLoading();
-    }
-  }catch(e){
-    console.error('Init error:',e);
-    initDone=true;
-    show('authScreen');hideLoading();
-  }
-}
-
-db.auth.onAuthStateChange(async function(event,session){
-  console.log('[Auth]',event, session?'has session':'no session');
-  if(event==='INITIAL_SESSION'||event==='SIGNED_IN'||event==='TOKEN_REFRESHED'){
-    if(session&&session.user&&!initDone){
-      initDone=true;
-      me=session.user;
-      await loadMyProf();
-      if(!myProf){hideLoading();show('rulesScreen');}
-      else startApp();
-    }else if(!session&&event==='INITIAL_SESSION'&&!initDone){
-      initDone=true;
-      show('authScreen');
+      hideLoading();show('authScreen');
     }
   }
-  if(event==='SIGNED_OUT'){me=null;myProf=null;initDone=false;friends=[];users=[];show('authScreen');}
+  if(event==='SIGNED_IN'&&!me){
+    me=session.user;
+    await loadMyProf();
+    if(!myProf){hideLoading();show('setupScreen');renderSetup();}
+    else startApp();
+  }
+  if(event==='TOKEN_REFRESHED'&&session)me=session.user;
+  if(event==='SIGNED_OUT'){me=null;myProf=null;friends=[];users=[];hideLoading();show('authScreen');}
 });
+
+function init(){
+  // Supabase onAuthStateChange handles everything.
+  // 3s safety fallback in case INITIAL_SESSION never fires
+  setTimeout(function(){
+    var ov=document.getElementById('loadingOverlay');
+    if(ov&&ov.style.display!=='none'&&ov.style.opacity!=='0'){
+      console.warn('Auth timeout - showing login');
+      hideLoading();show('authScreen');
+    }
+  },4000);
+}
 
 // SEARCH & FILTER
 var discFilter_location=null,discFilter_interest=null;

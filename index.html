@@ -318,7 +318,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 
 
 <!-- AUTH -->
-<div id="authScreen" class="screen" style="display:none;">
+<div id="authScreen" class="screen">
   <div class="card">
     <div class="logo">TanışBul 🎭</div>
     <div class="sub" id="authSub">Anonim kal, yakınındakilerle tanış!</div>
@@ -1909,37 +1909,28 @@ function ago(dateStr){
   if(m<1)return 'Az once';if(m<60)return m+'dk';if(h<24)return h+'sa';return d+'g';
 }
 
-// INIT - clean Supabase v2 session restore
-// AUTH
-db.auth.onAuthStateChange(async function(ev,session){
-  if(ev==='INITIAL_SESSION'){
+// SIGNED_OUT listener only
+db.auth.onAuthStateChange(function(ev,session){
+  if(ev==='SIGNED_OUT'){me=null;myProf=null;friends=[];users=[];show('authScreen');}
+  if(ev==='TOKEN_REFRESHED'&&session&&session.user)me=session.user;
+});
+
+async function init(){
+  // Oturumu kontrol ederken authScreen'i gizle
+  var authEl=document.getElementById('authScreen');
+  if(authEl)authEl.style.display='none';
+  try{
+    var res=await db.auth.getSession();
+    var session=res.data&&res.data.session?res.data.session:null;
     if(session&&session.user){
       me=session.user;
       await loadMyProf();
-      if(!myProf){show('setupScreen');renderSetup();}
-      else startApp();
-    }else{
-      show('authScreen');
+      if(!myProf){show('setupScreen');renderSetup();return;}
+      else{startApp();return;}
     }
-  }
-  if(ev==='SIGNED_IN'&&!me){
-    me=session.user;
-    await loadMyProf();
-    if(!myProf){show('setupScreen');renderSetup();}
-    else startApp();
-  }
-  if(ev==='TOKEN_REFRESHED'&&session)me=session.user;
-  if(ev==='SIGNED_OUT'){me=null;myProf=null;friends=[];users=[];show('authScreen');}
-});
-
-function init(){
-  // Safety: if INITIAL_SESSION never fires within 5s, show login
-  setTimeout(function(){
-    if(!me && document.getElementById('app').style.display==='none'
-       && document.getElementById('authScreen').style.display==='none'){
-      show('authScreen');
-    }
-  },5000);
+  }catch(e){console.error('getSession:',e);}
+  // Session yok veya hata - login goster
+  show('authScreen');
 }
 
 // SEARCH & FILTER
@@ -2165,7 +2156,7 @@ function getPayRef(){
   return ref;
 }
 
-init();
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
 </script>
 </body>
 </html>

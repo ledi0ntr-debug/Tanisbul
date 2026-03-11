@@ -637,11 +637,18 @@ async function doAuth(){
       var r=await db.auth.signUp({email:email,password:pass,options:{data:{username:uname}}});
       if(r.error)throw r.error;
       me=r.data.user;
-      if(me){show('rulesScreen');return;}
+      if(me){
+        localStorage.setItem('tb_user_id', me.id);
+        localStorage.setItem('tb_user_email', me.email);
+        show('rulesScreen');return;
+      }
     }else{
       var r2=await db.auth.signInWithPassword({email:email,password:pass});
       if(r2.error)throw r2.error;
       me=r2.data.user;
+      // Kendi session key'imizi kaydet
+      localStorage.setItem('tb_user_id', me.id);
+      localStorage.setItem('tb_user_email', me.email);
       await loadMyProf();
       if(!myProf)show('rulesScreen');
       else startApp();
@@ -660,8 +667,10 @@ async function googleLogin(){
 }
 
 async function doLogout(){
+  localStorage.removeItem('tb_user_id');
+  localStorage.removeItem('tb_user_email');
   await db.auth.signOut();
-  me=null;myProf=null;
+  me=null;myProf=null;friends=[];users=[];
   show('authScreen');
   toast('\uD83D\uDC4B Gorusuriz!');
 }
@@ -1916,20 +1925,37 @@ db.auth.onAuthStateChange(function(ev,session){
 });
 
 async function init(){
-  // Oturumu kontrol ederken authScreen'i gizle
   var authEl=document.getElementById('authScreen');
   if(authEl)authEl.style.display='none';
-  try{
-    var res=await db.auth.getSession();
-    var session=res.data&&res.data.session?res.data.session:null;
-    if(session&&session.user){
-      me=session.user;
-      await loadMyProf();
-      if(!myProf){show('setupScreen');renderSetup();return;}
-      else{startApp();return;}
-    }
-  }catch(e){console.error('getSession:',e);}
-  // Session yok veya hata - login goster
+
+  // Once kendi kaydettigimiz user id'yi dene
+  var savedId=localStorage.getItem('tb_user_id');
+  if(savedId){
+    try{
+      // Supabase session'i refresh et
+      var res=await db.auth.getSession();
+      var session=res.data&&res.data.session?res.data.session:null;
+      if(!session){
+        // Session expire - token refresh dene
+        try{
+          var ref=await db.auth.refreshSession();
+          session=ref.data&&ref.data.session?ref.data.session:null;
+        }catch(e2){}
+      }
+      if(session&&session.user){
+        me=session.user;
+        localStorage.setItem('tb_user_id',me.id);
+        localStorage.setItem('tb_user_email',me.email);
+        await loadMyProf();
+        if(!myProf){show('setupScreen');renderSetup();return;}
+        startApp();return;
+      }
+    }catch(e){console.error('session err:',e);}
+    // Session tamamen expire - temizle
+    localStorage.removeItem('tb_user_id');
+    localStorage.removeItem('tb_user_email');
+  }
+
   show('authScreen');
 }
 
